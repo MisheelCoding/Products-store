@@ -1,12 +1,15 @@
 import { USER } from '#models/User.js';
-import { authServiece } from '#services/auth.service.js';
+import { authServiece } from '#services/shared/auth.service.js';
+import { setRefreshTokenCookie } from '#utils/cookie.js';
 
 class AuthController {
   async login(req, res, next) {
     try {
       const { username, password } = req.body;
       const data = await authServiece.login(username, password);
-      res.json(data);
+
+      setRefreshTokenCookie(res, data.refreshToken);
+      res.json({ accessToken: data.accessToken, user: data.user });
     } catch (e) {
       res.status(400).json({ message: `Ошибка - ${e.message}` });
     }
@@ -15,10 +18,20 @@ class AuthController {
     try {
       const { username, email, password } = req.body;
       const data = await authServiece.register(username, email, password);
-      res.json(data);
+      setRefreshTokenCookie(res, data.refreshToken);
+      res.json({ accessToken: data.accessToken, user: data.user });
     } catch (e) {
       next(e);
     }
+  }
+  async refreshToken(req, res, next) {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      const data = await authServiece.refresh(refreshToken);
+
+      setRefreshTokenCookie(res, data.refreshToken);
+      res.json({ accessToken: data.accessToken, user: data.user });
+    } catch (e) {}
   }
   async logout(req, res, next) {
     try {

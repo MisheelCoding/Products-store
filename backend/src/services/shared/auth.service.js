@@ -3,30 +3,8 @@ import bcrypt from 'bcrypt';
 import { TOKEN } from '#models/Token.js';
 import { USER } from '#models/User.js';
 import { sendMail } from '#utils/mailer.js';
+import { genereateToken, saveToken, deleteToken, findToken } from '#utils/token.js';
 
-// *** GENERATE token func
-const genereateToken = (payload) => {
-  const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-  const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
-  return { accessToken, refreshToken };
-};
-
-// *** SAVE token func and update
-
-const saveToken = async (userId, refreshToken) => {
-  const existing = await TOKEN.findOne({ user: userId });
-  if (existing) {
-    existing.refreshToken = refreshToken;
-    return await existing.save();
-  }
-  return await TOKEN.create({ user: userId, refreshToken });
-};
-
-// *** DELETE token func
-const deleteToken = async (refreshToken) => await TOKEN.deleteOne({ refreshToken });
-
-// *** FIND token func
-const findToken = async (refreshToken) => await TOKEN.findOne({ refreshToken });
 // *** HELPER for duble code
 const mapUser = (user) => ({
   id: user._id,
@@ -35,6 +13,7 @@ const mapUser = (user) => ({
 });
 
 class AuthService {
+  // *** login
   async login(username, password) {
     const user = await USER.findOne({ username });
     if (!user) throw new Error(`Пользователь с ${username} таким именем не существет`);
@@ -46,6 +25,7 @@ class AuthService {
     await saveToken(user._id, tokens.refreshToken);
     return { ...tokens, user: mapUser(user) };
   }
+  // *** Register
   async register(username, email, password) {
     const candidate = await USER.findOne({ $or: [{ email }, { username }] });
     if (candidate) {
@@ -59,9 +39,24 @@ class AuthService {
     await saveToken(user._id, tokens.refreshToken);
     return { ...tokens, user: mapUser(user) };
   }
+  // *** refresh token
+  async refresh(refreshToken) {
+    if (!refreshToken) throw new Error('Нету токена ');
+
+    const data = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const tokenFromDb = await findToken(refreshToken);
+    if (!data || !tokenFromDb) throw new Error('Вы не авторизованы');
+
+    const user = await USER.findById(data.id);
+    const tokens = genereateToken(mapUser(user));
+    saveToken(user._id, tokens.refreshToken);
+    return { ...tokens, user: mapUser(user) };
+  }
+  // *** logout
   async logout(refreshToken) {
     return await deleteToken(refreshToken);
   }
+  // *** forget password
   async forgotPassword(email) {
     const user = await USER.findOne({ email });
     if (!user) throw new Error(`Пользователь не найден`);
@@ -86,6 +81,7 @@ class AuthService {
     await user.save();
     return { message: 'Пароль успешно изменен' };
   }
+  // *** verify email
   async verifyEmail(token) {
     const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     const user = await USER.findById(payload.id);
@@ -95,6 +91,7 @@ class AuthService {
     await user.save();
     return { message: 'Ваша почта успешно подверждена' };
   }
+  // ***  resend verify email
   async resendVerificationCode(email) {
     const user = await USER.findOne({ email });
     if (!user) throw new Error('user not found');
