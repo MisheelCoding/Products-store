@@ -16,13 +16,16 @@ const productSchema = new mongoose.Schema(
     isAvailable: { type: Boolean, default: true }, // Доступен ли товар для заказа
     weightPerUnit: { type: Number }, // Вес одной единицы товара (для расчёта доставки, например)
     stock: { type: Number, required: true, default: 0 }, // Текущее количество на складе
-    // Блок с ценами: текущая цена, старая цена и скидка
+    // Блок с ценами: текущая цена, старая цена и скидка зависимости от региона от магазина
     price: {
       type: Map,
       of: new mongoose.Schema({
-        current: { type: Number, required: true }, // текущая цена
-        old: { type: Number }, // старая цена
-        discountPercent: { type: Number }, // процент скидки (можно рассчитывать динамически)
+        type: Map,
+        of: new mongoose.Schema({
+          current: { type: Number, required: true }, // текущая цена
+          old: { type: Number }, // старая цена
+          discountPercent: { type: Number }, // процент скидки (можно рассчитывать динамически)
+        }),
       }),
       required: true,
     },
