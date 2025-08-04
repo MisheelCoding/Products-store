@@ -18,9 +18,13 @@ const productSchema = new mongoose.Schema(
     stock: { type: Number, required: true, default: 0 }, // Текущее количество на складе
     // Блок с ценами: текущая цена, старая цена и скидка
     price: {
-      current: { type: Number, required: true }, // текущая цена
-      old: { type: Number }, // старая цена
-      discountPercent: { type: Number }, // процент скидки (можно рассчитывать динамически)
+      type: Map,
+      of: new mongoose.Schema({
+        current: { type: Number, required: true }, // текущая цена
+        old: { type: Number }, // старая цена
+        discountPercent: { type: Number }, // процент скидки (можно рассчитывать динамически)
+      }),
+      required: true,
     },
   },
   { timestamps: true },

@@ -18,6 +18,7 @@ const orderSchema = new mongoose.Schema(
     },
     address: { type: String, required: true },
     phone: { type: String, required: true },
+    region: { type: String, required: true },
   },
   { timestamps: true },
 );

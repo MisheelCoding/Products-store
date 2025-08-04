@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken';
+import { TOKEN } from '#models/Token.js';
 // *** GENERATE token func
 export const genereateToken = (payload) => {
   const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });

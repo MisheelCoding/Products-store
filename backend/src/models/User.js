@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
     verified: { type: Boolean, default: false },
     isBanned: { type: Boolean, default: false },
     addresses: [addressSchema],
+    region: { type: String, required: true },
   },
   { timestamps: true },
 );

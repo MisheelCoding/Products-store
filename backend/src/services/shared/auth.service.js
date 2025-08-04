@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { TOKEN } from '#models/Token.js';
 import { USER } from '#models/User.js';
 import { sendMail } from '#utils/mailer.js';
 import { genereateToken, saveToken, deleteToken, findToken } from '#utils/token.js';

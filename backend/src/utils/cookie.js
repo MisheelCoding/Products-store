@@ -1,7 +1,7 @@
 export const refreshTokenCookieOptions = {
   httpOnly: true,
   secure: false,
-  sakeSite: 'Lax',
+  sameSite: 'Lax',
   maxAge: 30 * 24 * 60 * 60 * 1000,
 };
 

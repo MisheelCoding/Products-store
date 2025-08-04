@@ -1,4 +1,3 @@
-import { USER } from '#models/User.js';
 import { authServiece } from '#services/shared/auth.service.js';
 import { setRefreshTokenCookie } from '#utils/cookie.js';
 
