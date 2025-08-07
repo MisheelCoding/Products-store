@@ -1,7 +1,7 @@
-# Node.js
+# === Node.js ===
 node_modules/
-.env
-.env.*.local
+*.env
+*.env.*.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -12,30 +12,28 @@ coverage/
 logs/
 *.log
 
-# VSCode
+# === VSCode ===
 .vscode/
 
-# OS
+# === OS ===
 .DS_Store
 Thumbs.db
 
-# Optional caches
+# === Caches ===
 .cache/
 .nyc_output/
 .idea/
 
-# PM2 logs
+# === PM2 logs ===
 pids/
 *.pid
 *.seed
 *.pid.lock
 
-# Optional for Linux/Mac
+# === Vim / Linux temp ===
 *.swp
 *.swo
 
-# Frontend
+# === Frontend specific ===
 frontend/node_modules/
 frontend/dist/
-frontend/.env
-frontend/.env.*.local

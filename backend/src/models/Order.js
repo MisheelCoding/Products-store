@@ -11,6 +11,7 @@ const orderSchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     items: [orderItemSchema],
     totalAmount: { type: Number, required: true },
+    courier: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, //Курьер
     status: {
       type: String,
       enum: ['pending', 'confirmed', 'delivering', 'completed', 'cancelled'],

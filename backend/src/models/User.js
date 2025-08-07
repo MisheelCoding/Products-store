@@ -17,13 +17,14 @@ const userSchema = new mongoose.Schema(
     username: { type: String, unique: true, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
-    roles: { type: [String], default: ['USER'] },
+    roles: { type: [String], default: ['USER'] }, //COURIER , ADMIN, SUPERADMIN
     favorite: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     phone: { type: String },
     verified: { type: Boolean, default: false },
     isBanned: { type: Boolean, default: false },
     addresses: [addressSchema],
     region: { type: String, required: true },
+    store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
   },
   { timestamps: true },
 );
