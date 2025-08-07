@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema(
       required: true,
       enum: ['kg', 'g', 'psc', 'l', 'ml', 'pack'],
     },
+    store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store', required: true },
     quantityStep: { type: Number, default: 1 }, // Шаг количества для добавления в корзину (например, по 0.5кг)
     imageUrl: { type: String }, // Ссылка на изображение товара
     isAvailable: { type: Boolean, default: true }, // Доступен ли товар для заказа
