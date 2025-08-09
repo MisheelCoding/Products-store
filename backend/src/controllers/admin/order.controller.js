@@ -1,4 +1,3 @@
-import { STORE } from '#models/Store.js';
 import { adminOrderService } from '#services/admin/order.service.js';
 
 class AdminOrderController {
