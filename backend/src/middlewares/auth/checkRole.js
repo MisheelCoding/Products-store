@@ -1,25 +1,18 @@
-import jwt from 'jsonwebtoken';
-
-export function checkRole(roles) {
+// middlewares/auth/checkRole.js
+export function checkRole(...allowedRoles) {
   return (req, res, next) => {
-    try {
-      const authHeader = req.headers.authorization;
-      if (!authHeader) return res.status(401).json({ message: 'Нет авторизаций' });
+    const user = req.user; // установлен в authMiddleware
+    if (!user) return res.status(401).json({ message: 'Не авторизован' });
 
-      const token = authHeader.split(' ')[1];
-      if (!token) return res.status(401).json({ message: 'Нет токена' });
+    // SUPER_ADMIN видит всё
+    if (user.roles?.includes('SUPER_ADMIN')) return next();
 
-      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-      const userRoles = decoded.roles;
+    // если роли не передали — достаточно быть авторизованным
+    if (allowedRoles.length === 0) return next();
 
-      const hasRole = roles.some((role) => userRoles.includes(role));
-      if (!hasRole) return res.status(400).json({ message: 'Нет доступа: недостаточно прав' });
+    const has = allowedRoles.some((r) => user.roles?.includes(r));
+    if (!has) return res.status(403).json({ message: 'Доступ запрещён' });
 
-      req.user = decoded;
-      next();
-    } catch (e) {
-      console.error('Ошибка в checkRole:', e.message);
-      res.status(400).json({ message: 'ошибка авторизаций' + e.message });
-    }
+    next();
   };
 }

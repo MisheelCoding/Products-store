@@ -4,7 +4,17 @@ import { authMiddleware } from '#middlewares/auth/auth.js';
 import { checkRole } from '#middlewares/auth/checkRole.js';
 
 const router = express.Router();
+// все эти роуты доступны только ADMIN и SUPER_ADMIN
+router.use(authMiddleware, checkRole(['ADMIN', 'SUPER_ADMIN']));
 
-router.get('/users', authMiddleware, checkRole(['ADMIN']), adminController.getUsers);
+// ==== USERS ====
+router.get('/users', adminController.getUsers);
+router.post('/users', adminController.postUser);
+router.get('/users/:id', adminController.getOneUser);
+router.put('/users/:id', adminController.updateUser);
+router.delete('/users/:id', adminController.deleteUser);
+
+// ==== ORDERS ====
+router.get('/orders', adminController.getOrders);
 
 export default router;
