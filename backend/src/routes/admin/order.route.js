@@ -9,8 +9,8 @@ const router = express.Router();
 router.use(authMiddleware, checkRole(['ADMIN']));
 
 router.get('/orders', adminOrderController.getStoreOrders);
-router.get('/orders/:orderId', adminOrderController.getOrderByid);
+router.get('/orders/:orderId', adminOrderController.getOrderById);
+router.put('/orders/:orderId/assign-courier', adminOrderController.assignCourier);
 router.patch('/orders/:orderId/status', adminOrderController.updateOrderStatus);
-router.patch('/orders/:orderId/courier', adminOrderController.assignCourier);
 
 export default router;
