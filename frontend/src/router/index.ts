@@ -10,17 +10,25 @@ const router = createRouter({
     {
       name: 'profile',
       path: '/profile',
-      component: import('@/pages/site/ProfilePage.vue'),
+      component: () => import('@/pages/site/ProfilePage.vue'),
     },
     {
       name: 'favorite',
       path: '/favorite',
-      component: import('@/pages/site/FavoritePage.vue'),
+      component: () => import('@/pages/site/FavoritePage.vue'),
     },
     {
       name: 'cart',
       path: '/cart',
-      component: import('@/pages/site/CartPage.vue'),
+      component: () => import('@/pages/site/CartPage.vue'),
+    },
+    // home-category
+
+    {
+      name: 'category',
+      path: '/product/:id',
+      component: () => import('@/pages/site/CategoryPage.vue'),
+      props: true,
     },
   ],
 })

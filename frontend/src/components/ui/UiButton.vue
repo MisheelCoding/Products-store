@@ -14,9 +14,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { RouteLocationRaw } from 'vue-router'
 
 interface Props {
-  to?: string
+  to?: RouteLocationRaw
   type?: 'button' | 'submit' | 'reset'
   ariaLabel?: string
   variant?: 'dark' | 'white' | 'outline'
