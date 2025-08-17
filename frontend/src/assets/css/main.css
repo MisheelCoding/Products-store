@@ -1,0 +1,127 @@
+@import './fonts';
+@import './tailwind';
+/* =========================
+   Тема: токены (светлая по умолчанию)
+   ========================= */
+:root {
+  /* базовые */
+  --bg: #ececec; /*фон страницы */
+  --fg: #111111; /* основной текст */
+
+  /* поверхностные */
+  --card: #ffffff; /* фон карточек/блоков */
+  --border: #e5e7eb; /* границы */
+  --muted: #6b7280; /* вторичный текст */
+
+  /* акцент (по умолчанию — фиолетовый; переопределим ниже по контексту) */
+  --accent: #7c3aed; /* violet-600 */
+  --accent-contrast: #ffffff; /* текст на акценте */
+
+  color-scheme: light dark; /* нативные контролы подстраиваются */
+}
+
+/* =========================
+   Тёмная тема
+   ========================= */
+html.dark {
+  --bg: #191820;
+  --fg: #ffffff;
+
+  --card: #111827;
+  --border: #334155;
+  --muted: #9ca3af;
+
+  /* можешь оставить тот же акцент или сделать другой для dark */
+  /* --accent: #8b5cf6; */
+}
+
+/* =========================
+   Контекст бренда (опционально)
+   ========================= */
+/* магазин → зелёный */
+html[data-app='shop'] {
+  --accent: #16a34a;
+  --accent-contrast: #ffffff;
+}
+/* админка → фиолетовый (и так дефолт, но можно зафиксировать) */
+html[data-app='admin'] {
+  --accent: #7c3aed;
+  --accent-contrast: #ffffff;
+}
+
+/* =========================
+   База
+   ========================= */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Raleway', sans-serif;
+  transition:
+    background-color 600ms ease,
+    color 600ms ease;
+}
+
+/* уважай reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
+/* Заголовки отдельным шрифтом */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Onder', sans-serif;
+  color: var(--fg);
+}
+
+/* Примеры семантических утилит под токены */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: filter 200ms ease;
+}
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+.btn-primary:active {
+  filter: brightness(0.95);
+}
+
+/* Контейнер */
+.container {
+  max-width: min(1200px, 95%);
+  margin-inline: auto;
+}
+
+/* Опционально: базовые ссылки/бордеры через токены */
+a {
+  /* color: var(--accent); */
+}
+hr {
+  border-color: var(--border);
+}
