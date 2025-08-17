@@ -1,22 +1,28 @@
 <template>
-  <div>
-    <img :src="image" :alt="id" />
-    {{ title }}
-    <router-link :to="link"></router-link>
+  <div class="home-category__item h-80 relative mt-5">
+    <img
+      :src="category.image"
+      :alt="category.id"
+      class="absolute left-1/2 top-1/2 -translate-1/2 h-full !max-w-[300px] object-cover rounded-4xl"
+    />
+    <UiButton
+      :to="{ name: 'category', params: { id: category.id } }"
+      class="absolute left-1/2 bottom-5 -translate-x-1/2 z-50"
+      type="button"
+      variant="white"
+      >{{ category.title }}</UiButton
+    >
   </div>
 </template>
 
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import UiButton from '@/components/ui/UiButton.vue'
 
-interface Props {
+interface Category {
+  id: string
   title: string
   link: string
-  id: string
   image: string
 }
-const props = defineProps<{ category: Props }>()
-const { id, image, link, title } = toRefs(props.category)
+const { category } = defineProps<{ category: Category }>()
 </script>
-
-<style scoped></style>
