@@ -48,38 +48,47 @@ class AuthService {
 
     const user = await USER.findById(data.id);
     const tokens = genereateToken(mapUser(user));
-    saveToken(user._id, tokens.refreshToken);
+    await saveToken(user._id, tokens.refreshToken);
     return { ...tokens, user: mapUser(user) };
   }
   // *** logout
   async logout(refreshToken) {
     return await deleteToken(refreshToken);
   }
-  // *** forget password
   async forgotPassword(email) {
     const user = await USER.findOne({ email });
-    if (!user) throw new Error(`Пользователь не найден`);
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-    const resetLink = `${process.env.DEV_CLIENT_URL}/reset-password?token=${token}`;
+    // единый ответ (не палим существование e-mail)
+    const generic = { message: 'Если такой e-mail существует — письмо отправлено' };
+    if (!user) return generic;
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_RESET_SECRET, // <-- отдельный секрет
+      { expiresIn: '15m' },
+    );
+
+    const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
 
     await sendMail({
       to: email,
-      subject: 'Resest your password',
-      html: `<p>Click <a href="${resetLink}">here</a> to reset your password</p>`,
+      subject: 'Reset your password',
+      html: `<p>Нажмите <a href="${resetLink}">сюда</a>, чтобы сбросить пароль. Ссылка действует 15 минут.</p>`,
     });
 
-    return { message: 'reset email sent' };
+    return generic;
   }
+
   async changePassword(token, newPassword) {
-    const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    const payload = jwt.verify(token, process.env.JWT_RESET_SECRET); // <-- тот же секрет
     const user = await USER.findById(payload.id);
     if (!user) throw new Error('user not found');
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
-    return { message: 'Пароль успешно изменен' };
+    return { message: 'Пароль успешно изменён' };
   }
+
   // *** verify email
   async verifyEmail(token) {
     const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -88,15 +97,17 @@ class AuthService {
 
     user.verified = true;
     await user.save();
-    return { message: 'Ваша почта успешно подверждена' };
+    return { message: 'Ваша почта успешно подтверждена' };
   }
-  // ***  resend verify email
+
+  // *** resend verify email (единный CLIENT_URL)
   async resendVerificationCode(email) {
     const user = await USER.findOne({ email });
     if (!user) throw new Error('user not found');
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-    const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+    const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${token}`; // <-- CLIENT_URL
+
     await sendMail({
       to: email,
       subject: 'Подтверждение почты',
@@ -105,6 +116,57 @@ class AuthService {
 
     return { message: 'Письмо отправлено повторно' };
   }
+
+  // // *** forget password
+  // async forgotPassword(email) {
+  //   const user = await USER.findOne({ email });
+  //   if (!user) throw new Error(`Пользователь не найден`);
+
+  //   const token = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
+  //   const resetLink = `${process.env.DEV_CLIENT_URL}/reset-password?token=${token}`;
+
+  //   await sendMail({
+  //     to: email,
+  //     subject: 'Resest your password',
+  //     html: `<p>Click <a href="${resetLink}">here</a> to reset your password</p>`,
+  //   });
+
+  //   return { message: 'reset email sent' };
+  // }
+  // async changePassword(token, newPassword) {
+  //   const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+  //   const user = await USER.findById(payload.id);
+  //   if (!user) throw new Error('user not found');
+
+  //   user.password = await bcrypt.hash(newPassword, 10);
+  //   await user.save();
+  //   return { message: 'Пароль успешно изменен' };
+  // }
+  // // *** verify email
+  // async verifyEmail(token) {
+  //   const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+  //   const user = await USER.findById(payload.id);
+  //   if (!user) throw new Error('user not found');
+
+  //   user.verified = true;
+  //   await user.save();
+  //   return { message: 'Ваша почта успешно подверждена' };
+  // }
+  // // ***  resend verify email
+  // async resendVerificationCode(email) {
+  //   const user = await USER.findOne({ email });
+  //   if (!user) throw new Error('user not found');
+
+  //   const token = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
+  //   const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+  //   await sendMail({
+  //     to: email,
+  //     subject: 'Подтверждение почты',
+  //     html: `<p>Нажмите <a href="${verifyLink}">здесь</a>, чтобы подтвердить</p>`,
+  //   });
+
+  //   return { message: 'Письмо отправлено повторно' };
+  // }
 }
 
 const authServiece = new AuthService();

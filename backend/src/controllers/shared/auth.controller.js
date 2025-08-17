@@ -45,27 +45,49 @@ class AuthController {
       const data = await authServiece.forgotPassword(req.body.email);
       res.json(data);
     } catch (e) {
-      next(e);
+      res.status(400).json({ error: e });
     }
   }
   async changePassword(req, res, next) {
     try {
-      const { refreshtoken } = req.query;
+      const { token } = req.query; // <-- было refreshtoken
       const { newPassword } = req.body;
-      const data = await authServiece.changePassword(refreshtoken, newPassword);
+      const data = await authServiece.changePassword(token, newPassword);
       res.json(data);
     } catch (e) {
       next(e);
     }
   }
+
   async verifyEmail(req, res, next) {
     try {
-      const data = await authServiece.verifyEmail(req.query.refreshtoken);
+      const { token } = req.query; // <-- было refreshtoken
+      const data = await authServiece.verifyEmail(token);
       res.json(data);
     } catch (e) {
       next(e);
     }
   }
+  // async changePassword(req, res, next) {
+  //   try {
+  //     const { refreshtoken } = req.query;
+  //     const { newPassword } = req.body;
+  //     const data = await authServiece.changePassword(refreshtoken, newPassword);
+  //     res.json(data);
+  //   } catch (e) {
+  //     next(e);
+  //   }
+  // }
+  // async verifyEmail(req, res, next) {
+  //   try {
+  //     const data = await authServiece.verifyEmail(req.query.refreshtoken);
+  //     res.json(data);
+  //   } catch (e) {
+  //     next(e);
+  //   }
+  // }
+
+  // ***
   async resendVerificationCode(req, res, next) {
     try {
       const data = await authServiece.resendVerificationCode(req.body.email);
