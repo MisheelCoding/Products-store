@@ -1,0 +1,40 @@
+/*  */
+@font-face {
+  font-family: 'Raleway';
+  src:
+    url('../fonts/raleway/Raleway-Regular.woff2') format('woff2'),
+    url('../fonts/raleway/Raleway-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src:
+    url('../fonts/raleway/Raleway-Medium.woff2') format('woff2'),
+    url('../fonts/raleway/Raleway-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Onder';
+  src:
+    url('../fonts/onder/Onder-Regular.woff2') format('woff2'),
+    url('../fonts/onder/Onder-Regular.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+@font-face {
+  font-family: 'Pacifico';
+  src:
+    url('../fonts/pacifico/Pacifico-Regular.woff2') format('woff2'),
+    url('../fonts/pacifico/Pacifico-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+} */

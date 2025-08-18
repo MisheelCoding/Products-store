@@ -4,7 +4,7 @@ import express from 'express';
 const router = express.Router();
 
 router.get('/products', productsController.list);
-router.get('/products/:id', productsController.getOne);
 router.get('/products/categories', productsController.categories);
+router.get('/products/:id', productsController.getOne);
 
 export default router;
