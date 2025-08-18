@@ -37,6 +37,7 @@ const productSchema = new mongoose.Schema(
 );
 
 export const PRODUCT = mongoose.model('Product', productSchema);
+
 // import mongoose from 'mongoose';
 
 // const productSchema = new mongoose.Schema(

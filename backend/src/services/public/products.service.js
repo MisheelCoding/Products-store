@@ -5,7 +5,7 @@ import { clamp } from '#utils/limitPage.js';
 const DEF_STORE = process.env.DEFAULT_STORE || 'default';
 
 class ProductsService {
-  async list({ q, category, limit, page, region, store, sort }) {
+  async list({ q, category, limit, page, region = 'default', store, sort }) {
     const storeKey = store || region || DEF_STORE;
 
     const filter = { isAvailable: true };
@@ -48,7 +48,7 @@ class ProductsService {
     };
   }
 
-  async getOne(id, { region, store } = {}) {
+  async getOne(id, { region = 'default', store } = {}) {
     const storeKey = store || region || DEF_STORE;
     const doc = await PRODUCT.findById(id).lean();
     if (!doc) return null;
@@ -60,8 +60,12 @@ class ProductsService {
     };
   }
 
-  async categories() {
-    return PRODUCT.distinct('category');
+  async categories({ region = 'default', store } = {}) {
+    const storeKey = store || region || DEF_STORE;
+    return PRODUCT.distinct('category', {
+      isAvailable: true,
+      [`price.${storeKey}`]: { $exists: true },
+    });
   }
 }
 
