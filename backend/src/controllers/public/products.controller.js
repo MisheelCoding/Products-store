@@ -28,7 +28,7 @@ class ProductsController {
     try {
       const { region, store } = req.query;
       const cats = await productsService.categories({ region, store });
-      res.json({ categories: cats }); // единый формат
+      res.json({ categories: cats });
     } catch (e) {
       next(e);
     }
