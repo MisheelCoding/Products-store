@@ -1,7 +1,5 @@
 <template>
-  <div>Profile</div>
-
-  <router-link to="auth/login">Login</router-link>
+  <div>register</div>
 </template>
 
 <script setup lang="ts"></script>

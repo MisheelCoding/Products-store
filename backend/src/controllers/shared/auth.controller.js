@@ -23,14 +23,34 @@ class AuthController {
       next(e);
     }
   }
+  // async refreshToken(req, res, next) {
+  //   try {
+  //     const refreshToken = req.cookies.refreshToken;
+  //     const data = await authServiece.refresh(refreshToken);
+
+  //     setRefreshTokenCookie(res, data.refreshToken);
+  //     res.json({ accessToken: data.accessToken, user: data.user });
+  //   } catch (e) {}
+  // }
   async refreshToken(req, res, next) {
     try {
+      // ЛОГИРУЕМ куки, чтобы видеть, что реально прилетает от браузера
+      console.log('Cookies в refreshToken:', req.cookies);
+
       const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) {
+        return res.status(401).json({ message: 'Нет refresh токена' });
+      }
+
       const data = await authServiece.refresh(refreshToken);
 
       setRefreshTokenCookie(res, data.refreshToken);
+
       res.json({ accessToken: data.accessToken, user: data.user });
-    } catch (e) {}
+    } catch (e) {
+      console.error('Ошибка при refresh:', e);
+      res.status(401).json({ message: 'Ошибка refresh' });
+    }
   }
   async logout(req, res, next) {
     try {

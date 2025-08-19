@@ -8,31 +8,8 @@
     </div>
     <!--  error-->
     <p v-if="error" class="mt-4 text-red-600">{{ error }}</p>
-    <!--  loading-->
+
     <swiper
-      v-else-if="loading"
-      class="pb-5"
-      :slides-per-view="1"
-      :space-between="16"
-      :allow-touch-move="false"
-      :navigation="false"
-      :pagination="false"
-      :breakpoints="{
-        480: { slidesPerView: 2, spaceBetween: 20 },
-        700: { slidesPerView: 3, spaceBetween: 20 },
-        960: { slidesPerView: 4, spaceBetween: 20 },
-        1200: { slidesPerView: 5, spaceBetween: 20 },
-      }"
-    >
-      <SwiperSlide v-for="n in 5" :key="n">
-        <div class="h-48 rounded-lg bg-gray-200 overflow-hidden skeleton">
-          <div class="h-full w-full"></div>
-        </div>
-      </SwiperSlide>
-    </swiper>
-    <!-- slider -->
-    <swiper
-      v-else
       class="pb-5"
       :slides-per-view="1"
       :modules="modules"
