@@ -3,7 +3,7 @@
   <component
     :is="to ? 'router-link' : 'button'"
     :to="to"
-    class="ui-button px-5 py-3 font-medium rounded-full transition cursor-pointer"
+    class="ui-button px-5 py-3 rounded-full transition cursor-pointer"
     :class="[variantClass, sizeClass]"
     :type="to ? undefined : type"
     :aria-label="ariaLabel"

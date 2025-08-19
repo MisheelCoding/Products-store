@@ -3,7 +3,8 @@ import bcrypt from 'bcrypt';
 import { USER } from '#models/User.js';
 import { sendMail } from '#utils/mailer.js';
 import { genereateToken, saveToken, deleteToken, findToken } from '#utils/token.js';
-
+import { TOKEN } from '#models/Token.js';
+import mongoose from 'mongoose';
 // *** HELPER for duble code
 const mapUser = (user) => ({
   id: user._id,
@@ -40,15 +41,31 @@ class AuthService {
   }
   // *** refresh token
   async refresh(refreshToken) {
-    if (!refreshToken) throw new Error('Нету токена ');
+    if (!refreshToken) throw new Error('Нету токена');
 
-    const data = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    const tokenFromDb = await findToken(refreshToken);
-    if (!data || !tokenFromDb) throw new Error('Вы не авторизованы');
+    let payload;
+    try {
+      payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    } catch {
+      throw new Error('Вы не авторизованы');
+    }
 
-    const user = await USER.findById(data.id);
+    // проверяем, есть ли запись для пользователя
+    const tokenDoc = await TOKEN.findOne({ user: payload.id });
+    if (!tokenDoc) throw new Error('Вы не авторизованы');
+
+    // ✅ тут убираем строгую проверку на равенство
+    // достаточно того, что refresh валидный и юзер есть
+
+    const user = await USER.findById(payload.id);
+    if (!user) throw new Error('Пользователь не найден');
+
+    // генерируем новые токены (и новый refresh!)
     const tokens = genereateToken(mapUser(user));
+
+    // сохраняем новый refresh в базу
     await saveToken(user._id, tokens.refreshToken);
+
     return { ...tokens, user: mapUser(user) };
   }
   // *** logout

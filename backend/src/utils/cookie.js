@@ -1,10 +1,10 @@
-export const refreshTokenCookieOptions = {
-  httpOnly: true,
-  secure: false,
-  sameSite: 'Lax',
-  maxAge: 30 * 24 * 60 * 60 * 1000,
-};
+// src/utils/cookie.js
+const common = { httpOnly: true, secure: false, sameSite: 'none', path: '/' };
 
 export const setRefreshTokenCookie = (res, token) => {
-  res.cookie('refreshToken', token, refreshTokenCookieOptions);
+  res.cookie('refreshToken', token, { ...common, maxAge: 30 * 24 * 3600 * 1000 }); // 30 дней
+};
+
+export const clearAuthCookies = (res) => {
+  res.clearCookie('refreshToken', common);
 };
