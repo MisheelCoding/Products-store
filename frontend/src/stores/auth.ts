@@ -2,7 +2,6 @@
 import { defineStore } from 'pinia'
 import api from '@/scripts/api'
 import type { User, AuthResponse } from '@/types/auth'
-import type { AxiosError } from 'axios'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -36,17 +35,15 @@ export const useAuthStore = defineStore('auth', {
         this.setAccessToken(data.accessToken)
         this.setUser(data.user)
       } catch (err) {
-        const error = err as AxiosError<{ message?: string }>
-        this.error = error.response?.data?.message ?? 'Ошибка входа'
         this.accessToken = ''
         this.user = null
-        throw error
+        throw err
       } finally {
         this.loading = false
       }
     },
 
-    // 🔹 Новый метод: восстановление из refresh-cookie
+    // восстановление из refresh-cookie при обновлений страницы
     async tryRestore(): Promise<void> {
       try {
         const { data } = await api.post<AuthResponse>('/api/auth/refresh')

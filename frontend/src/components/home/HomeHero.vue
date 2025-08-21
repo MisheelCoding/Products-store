@@ -26,7 +26,7 @@
         </UiButton>
         <button @click="fetchTest">test</button>
         <h1>{{ auth.user?.username }}</h1>
-        <h1>{{ auth.user }}</h1>
+        <h1>{{ console.log(auth.user) }}</h1>
       </div>
     </div>
   </div>

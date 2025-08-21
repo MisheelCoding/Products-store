@@ -13,8 +13,9 @@ async function submit() {
     await auth.login(username.value, password.value)
     // для быстрой проверки:
     console.log('Логин ок:', auth.user)
-  } catch {
+  } catch (e) {
     // ошибка уже в auth.error
+    console.log('err', e)
   }
 }
 </script>
