@@ -1,6 +1,6 @@
 // types/auth.ts
 export interface User {
-  _id: string
+  id: string
   username: string
   email: string
   // пароль лучше не хранить на фронте, но если backend всё равно шлёт — можешь исключить

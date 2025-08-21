@@ -1,4 +1,3 @@
-// middlewares/auth/auth.js
 // src/middlewares/auth/auth.js
 import jwt from 'jsonwebtoken';
 

@@ -5,6 +5,7 @@ import { sendMail } from '#utils/mailer.js';
 import { genereateToken, saveToken, deleteToken, findToken } from '#utils/token.js';
 import { TOKEN } from '#models/Token.js';
 import mongoose from 'mongoose';
+import { buildTokenPayload, toClientUser } from '#utils/mapUser.js';
 // *** HELPER for duble code
 const mapUser = (user) => ({
   id: user._id,
@@ -21,9 +22,9 @@ class AuthService {
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new Error(`Не верный пароль`);
 
-    const tokens = genereateToken(mapUser(user));
+    const tokens = genereateToken(buildTokenPayload(user));
     await saveToken(user._id, tokens.refreshToken);
-    return { ...tokens, user: mapUser(user) };
+    return { ...tokens, user: toClientUser(user) };
   }
   // *** Register
   async register(username, email, password) {
@@ -35,9 +36,9 @@ class AuthService {
     const hash = await bcrypt.hash(password, 10);
     const user = await USER.create({ username, email, password: hash });
 
-    const tokens = genereateToken(mapUser(user));
+    const tokens = genereateToken(buildTokenPayload(user));
     await saveToken(user._id, tokens.refreshToken);
-    return { ...tokens, user: mapUser(user) };
+    return { ...tokens, user: toClientUser(user) };
   }
   // *** refresh token
   async refresh(refreshToken) {
@@ -61,12 +62,12 @@ class AuthService {
     if (!user) throw new Error('Пользователь не найден');
 
     // генерируем новые токены (и новый refresh!)
-    const tokens = genereateToken(mapUser(user));
+    const tokens = genereateToken(buildTokenPayload(user));
 
     // сохраняем новый refresh в базу
     await saveToken(user._id, tokens.refreshToken);
 
-    return { ...tokens, user: mapUser(user) };
+    return { ...tokens, user: toClientUser(user) };
   }
   // *** logout
   async logout(refreshToken) {
