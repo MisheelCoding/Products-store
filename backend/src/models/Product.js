@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema(
     stockByStore: { type: Map, of: Number, default: {} },
     availabilityByStore: { type: Map, of: Boolean, default: {} },
 
-    // Упрощённо: storeKey → { current, old, discountPercent }
+    // Упрощённо: storeKey { current, old, discountPercent }
     price: {
       type: Map,
       of: new mongoose.Schema(

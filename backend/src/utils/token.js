@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { TOKEN } from '#models/Token.js';
 // *** GENERATE token func
 export const genereateToken = (payload) => {
-  const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
+  const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' }); //15m //10s
   const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
   return { accessToken, refreshToken };
 };
@@ -23,3 +23,6 @@ export const deleteToken = async (refreshToken) => await TOKEN.deleteOne({ refre
 
 // *** FIND token func
 export const findToken = async (refreshToken) => await TOKEN.findOne({ refreshToken });
+
+// *** find by user
+export const findTokenByUser = async (userId) => TOKEN.findOne({ user: userId });

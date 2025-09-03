@@ -1,4 +1,4 @@
-// middlewares/auth/auth.js
+// src/middlewares/auth/auth.js
 import jwt from 'jsonwebtoken';
 
 export const authMiddleware = (req, res, next) => {
@@ -10,7 +10,9 @@ export const authMiddleware = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    if (!decoded?.id) return res.status(401).json({ message: 'Недопустимый токен' });
+    if (!decoded?.id) {
+      return res.status(401).json({ message: 'Недопустимый токен' });
+    }
 
     req.user = decoded;
     next();

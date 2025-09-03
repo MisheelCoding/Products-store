@@ -24,6 +24,9 @@
         >
           Начать покупки
         </UiButton>
+        <button @click="fetchTest">test</button>
+        <h1>{{ auth.user?.username }}</h1>
+        <h1>{{ console.log(auth.user) }}</h1>
       </div>
     </div>
   </div>
@@ -34,6 +37,21 @@ import heroImg from '@/assets/img/optimized/home-hero.webp'
 
 import UiButton from '@/components/ui/UiButton.vue'
 import UiTitle from '@/components/ui/UiTitle.vue'
+import api from '@/scripts/api'
+import { useAuthStore } from '@/stores/auth'
+const auth = useAuthStore()
+import { ref } from 'vue'
+const test = ref([])
+
+async function fetchTest() {
+  try {
+    const { data } = await api.get('api/admin/products')
+    test.value = data.items
+    console.log('Ответ:', data)
+  } catch (e) {
+    console.log('erro--', e)
+  }
+}
 </script>
 
 <style scoped></style>

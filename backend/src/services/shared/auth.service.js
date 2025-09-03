@@ -3,7 +3,9 @@ import bcrypt from 'bcrypt';
 import { USER } from '#models/User.js';
 import { sendMail } from '#utils/mailer.js';
 import { genereateToken, saveToken, deleteToken, findToken } from '#utils/token.js';
-
+import { TOKEN } from '#models/Token.js';
+import mongoose from 'mongoose';
+import { buildTokenPayload, toClientUser } from '#utils/mapUser.js';
 // *** HELPER for duble code
 const mapUser = (user) => ({
   id: user._id,
@@ -20,10 +22,39 @@ class AuthService {
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new Error(`Не верный пароль`);
 
-    const tokens = genereateToken(mapUser(user));
+    const tokens = genereateToken(buildTokenPayload(user));
     await saveToken(user._id, tokens.refreshToken);
-    return { ...tokens, user: mapUser(user) };
+    return { ...tokens, user: toClientUser(user) };
   }
+  // async login(identifier, password) {
+  //   const id = (identifier || '').trim();
+  //   const pwd = password || '';
+
+  //   // единое сообщение — не палим, существует ли пользователь
+  //   const INVALID = new Error('Неверные логин/email или пароль');
+
+  //   if (!id || !pwd) throw INVALID;
+
+  //   const isMail = id.includes('@', 0);
+
+  //   // если поля в БД хранятся как есть (не в lower), используем collation для case-insensitive поиска
+  //   // strength:2 — без учёта регистра
+  //   const query = isMail
+  //     ? { email: id } // будет сравниваться без учёта регистра благодаря collation
+  //     : { username: id };
+
+  //   const user = await USER.findOne(query).collation({ locale: 'en', strength: 2 });
+
+  //   if (!user) throw INVALID;
+
+  //   const ok = await bcrypt.compare(pwd, user.password);
+  //   if (!ok) throw INVALID;
+
+  //   const tokens = genereateToken(buildTokenPayload(user));
+  //   await saveToken(user._id, tokens.refreshToken);
+
+  //   return { ...tokens, user: toClientUser(user) };
+  // }
   // *** Register
   async register(username, email, password) {
     const candidate = await USER.findOne({ $or: [{ email }, { username }] });
@@ -34,22 +65,38 @@ class AuthService {
     const hash = await bcrypt.hash(password, 10);
     const user = await USER.create({ username, email, password: hash });
 
-    const tokens = genereateToken(mapUser(user));
+    const tokens = genereateToken(buildTokenPayload(user));
     await saveToken(user._id, tokens.refreshToken);
-    return { ...tokens, user: mapUser(user) };
+    return { ...tokens, user: toClientUser(user) };
   }
   // *** refresh token
   async refresh(refreshToken) {
-    if (!refreshToken) throw new Error('Нету токена ');
+    if (!refreshToken) throw new Error('Нету токена');
 
-    const data = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    const tokenFromDb = await findToken(refreshToken);
-    if (!data || !tokenFromDb) throw new Error('Вы не авторизованы');
+    let payload;
+    try {
+      payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    } catch {
+      throw new Error('Вы не авторизованы');
+    }
 
-    const user = await USER.findById(data.id);
-    const tokens = genereateToken(mapUser(user));
+    // проверяем, есть ли запись для пользователя
+    const tokenDoc = await TOKEN.findOne({ user: payload.id });
+    if (!tokenDoc) throw new Error('Вы не авторизованы');
+
+    // тут убираем строгую проверку на равенство
+    // достаточно того, что refresh валидный и юзер есть
+
+    const user = await USER.findById(payload.id);
+    if (!user) throw new Error('Пользователь не найден');
+
+    // генерируем новые токены (и новый refresh!)
+    const tokens = genereateToken(buildTokenPayload(user));
+
+    // сохраняем новый refresh в базу
     await saveToken(user._id, tokens.refreshToken);
-    return { ...tokens, user: mapUser(user) };
+
+    return { ...tokens, user: toClientUser(user) };
   }
   // *** logout
   async logout(refreshToken) {
