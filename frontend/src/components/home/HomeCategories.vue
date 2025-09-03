@@ -2,7 +2,12 @@
   <div class="home-category container my-30">
     <div class="home-category__head flex justify-between items-center">
       <UiTitle>Категорий</UiTitle>
-      <UiButton aria-label="Кнопка посмотреть все" type="button" variant="outline">
+      <UiButton
+        :to="{ name: 'category', params: { id: 'all' } }"
+        aria-label="Кнопка посмотреть все"
+        type="button"
+        variant="outline"
+      >
         Посмотреть
       </UiButton>
     </div>
@@ -10,6 +15,7 @@
     <p v-if="error" class="mt-4 text-red-600">{{ error }}</p>
 
     <swiper
+      v-if="categories.length"
       class="pb-5"
       :slides-per-view="1"
       :modules="modules"
@@ -35,6 +41,7 @@
       <div class="swiper-button-next"></div>
       <div class="swiper-pagination"></div>
     </swiper>
+    <SkeltonSlider v-else />
   </div>
 </template>
 
@@ -50,6 +57,7 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import { useCategories } from '@/composables/useCategries'
 import { onMounted } from 'vue'
+import SkeltonSlider from '@/skeltons/SkeltonSlider.vue'
 
 const pagination = {
   clickable: true,

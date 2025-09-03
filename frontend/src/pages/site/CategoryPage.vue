@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ProductsContainer from '@/components/category/ProductsContainer.vue'
 import {
   CATEGORY_TITLES,
   type Product,
@@ -6,7 +7,7 @@ import {
   type ProductsListResponse,
 } from '@/types/products'
 import axios from 'axios'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps<{ id: string }>()
 
@@ -19,22 +20,26 @@ const products = ref<Product[]>([])
 
 async function fetchProducts() {
   const res = await axios.get<ProductsListResponse>(`http://localhost:5007/api/public/products`, {
-    params: { category: props.id },
+    params: { category: props.id === 'all' ? '' : props.id },
   })
 
   products.value = res.data.items
-  console.log(products.value)
+  // console.log(products.value)
 }
 
 onMounted(() => {
   fetchProducts()
 })
+watch(
+  () => props.id,
+  () => fetchProducts(),
+)
 </script>
 
 <template>
   <section class="container py-10">
     <h1 class="text-2xl font-bold">Категория: {{ title }}</h1>
 
-    <!-- тут уже грузишь товары по категории -->
+    <ProductsContainer />
   </section>
 </template>

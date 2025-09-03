@@ -26,6 +26,35 @@ class AuthService {
     await saveToken(user._id, tokens.refreshToken);
     return { ...tokens, user: toClientUser(user) };
   }
+  // async login(identifier, password) {
+  //   const id = (identifier || '').trim();
+  //   const pwd = password || '';
+
+  //   // единое сообщение — не палим, существует ли пользователь
+  //   const INVALID = new Error('Неверные логин/email или пароль');
+
+  //   if (!id || !pwd) throw INVALID;
+
+  //   const isMail = id.includes('@', 0);
+
+  //   // если поля в БД хранятся как есть (не в lower), используем collation для case-insensitive поиска
+  //   // strength:2 — без учёта регистра
+  //   const query = isMail
+  //     ? { email: id } // будет сравниваться без учёта регистра благодаря collation
+  //     : { username: id };
+
+  //   const user = await USER.findOne(query).collation({ locale: 'en', strength: 2 });
+
+  //   if (!user) throw INVALID;
+
+  //   const ok = await bcrypt.compare(pwd, user.password);
+  //   if (!ok) throw INVALID;
+
+  //   const tokens = genereateToken(buildTokenPayload(user));
+  //   await saveToken(user._id, tokens.refreshToken);
+
+  //   return { ...tokens, user: toClientUser(user) };
+  // }
   // *** Register
   async register(username, email, password) {
     const candidate = await USER.findOne({ $or: [{ email }, { username }] });
@@ -55,7 +84,7 @@ class AuthService {
     const tokenDoc = await TOKEN.findOne({ user: payload.id });
     if (!tokenDoc) throw new Error('Вы не авторизованы');
 
-    // ✅ тут убираем строгую проверку на равенство
+    // тут убираем строгую проверку на равенство
     // достаточно того, что refresh валидный и юзер есть
 
     const user = await USER.findById(payload.id);

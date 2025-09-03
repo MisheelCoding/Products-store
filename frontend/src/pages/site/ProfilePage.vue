@@ -25,10 +25,14 @@
   </div>
 
   <router-link to="auth/login">Login</router-link>
+  <button @click="auth.logout()" class="ml-10">logout</button>
 </template>
 
 <script setup lang="ts">
 import avatarImg from '@/assets/img/optimized/avatar-exapmle.webp'
+import { useAuthStore } from '@/stores/auth'
+
+const auth = useAuthStore()
 </script>
 
 <style scoped>

@@ -1,6 +1,13 @@
 import type { ValueOf } from './valueOf'
 
-export type ProductCategory = 'fruits' | 'vegetables' | 'sweets' | 'dairy' | 'sausages' | 'cheese'
+export type ProductCategory =
+  | 'fruits'
+  | 'vegetables'
+  | 'sweets'
+  | 'dairy'
+  | 'sausages'
+  | 'cheese'
+  | 'all'
 
 export const CATEGORY_TITLES = {
   cheese: 'Сыр',
@@ -9,6 +16,7 @@ export const CATEGORY_TITLES = {
   sausages: 'Колбасы',
   sweets: 'Сладости',
   vegetables: 'Овощи',
+  all: 'Все товары',
 } as const satisfies Record<ProductCategory, string>
 
 // значение категорий
