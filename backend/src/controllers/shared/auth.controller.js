@@ -1,5 +1,5 @@
 import { authServiece } from '#services/shared/auth.service.js';
-import { setRefreshTokenCookie } from '#utils/cookie.js';
+import { clearAuthCookies, setRefreshTokenCookie } from '#utils/cookie.js';
 
 class AuthController {
   async login(req, res, next) {
@@ -55,6 +55,7 @@ class AuthController {
   async logout(req, res, next) {
     try {
       await authServiece.logout(req.query.refreshtoken);
+      clearAuthCookies(res);
       res.json({ message: 'Вы успешно вышли с аккаунта ' });
     } catch (e) {
       next(e);
@@ -70,7 +71,7 @@ class AuthController {
   }
   async changePassword(req, res, next) {
     try {
-      const { token } = req.query; // <-- было refreshtoken
+      const { token } = req.query; //  было refreshtoken
       const { newPassword } = req.body;
       const data = await authServiece.changePassword(token, newPassword);
       res.json(data);
@@ -81,7 +82,7 @@ class AuthController {
 
   async verifyEmail(req, res, next) {
     try {
-      const { token } = req.query; // <-- было refreshtoken
+      const { token } = req.query; //  было refreshtoken
       const data = await authServiece.verifyEmail(token);
       res.json(data);
     } catch (e) {

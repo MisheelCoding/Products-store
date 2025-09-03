@@ -1,3 +1,5 @@
+//www.houseofblanks.com/
+//shihiko.com/products/fallen-chariot-shacket?_pos=3&_psq=jacket&_ss=e&_v=1.0
 // stores/auth.ts
 import { defineStore } from 'pinia'
 import api from '@/scripts/api'
@@ -22,9 +24,15 @@ export const useAuthStore = defineStore('auth', {
     setUser(user: User) {
       this.user = user
     },
-    logout() {
-      this.accessToken = ''
-      this.user = null
+    async logout() {
+      try {
+        await api.post('/api/auth/logout', null, { withCredentials: true })
+      } catch (_) {
+        console.log(_)
+      } finally {
+        this.accessToken = ''
+        this.user = null
+      }
     },
 
     async login(username: string, password: string): Promise<void> {
@@ -46,11 +54,13 @@ export const useAuthStore = defineStore('auth', {
     // восстановление из refresh-cookie при обновлений страницы
     async tryRestore(): Promise<void> {
       try {
-        const { data } = await api.post<AuthResponse>('/api/auth/refresh')
+        const { data } = await api.post<AuthResponse>('/api/auth/refresh', null, {
+          withCredentials: true,
+        })
         this.setAccessToken(data.accessToken)
         this.setUser(data.user)
       } catch {
-        // refresh-cookie нет или протух → остаёмся гостем
+        // refresh-cookie нет или протух  остаёмся гостем
         this.logout()
       }
     },

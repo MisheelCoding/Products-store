@@ -1,6 +1,6 @@
 <template>
   <swiper
-    class="pb-5"
+    class="pb-5 container"
     :slides-per-view="1"
     :space-between="spaceBetween"
     :allow-touch-move="false"
@@ -9,8 +9,10 @@
     :breakpoints="breakpoints"
   >
     <SwiperSlide v-for="n in count" :key="n">
-      <div :class="['rounded-lg bg-gray-200 overflow-hidden skeleton', heightClass]">
-        <div class="h-full w-full"></div>
+      <div
+        :class="['rounded-4xl bg-gray-300 !min-h-[320px]  overflow-hidden skeleton', heightClass]"
+      >
+        <div class="h-full w-full !max-w-[300px]"></div>
       </div>
     </SwiperSlide>
   </swiper>

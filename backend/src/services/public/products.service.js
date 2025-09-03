@@ -5,7 +5,7 @@ import { clamp } from '#utils/limitPage.js';
 const DEF_STORE = process.env.DEFAULT_STORE || 'default';
 
 class ProductsService {
-  async list({ q, category, limit, page, region = 'default', store, sort }) {
+  async list({ q, category, limit = 4, page = 1, region = 'default', store, sort }) {
     const storeKey = store || region || DEF_STORE;
 
     const filter = { isAvailable: true };
@@ -15,8 +15,10 @@ class ProductsService {
     filter[`price.${storeKey}`] = { $exists: true };
 
     let sortOption = { createdAt: -1 }; // по умолчанию — новые первыми
-    if (sort === 'price_asc') sortOption = { [`price.${storeKey}.current`]: 1 };
-    else if (sort === 'price_desc') sortOption = { [`price.${storeKey}.current`]: -1 };
+    if (sort === 'price_asc')
+      sortOption = { [`price.${storeKey}.current`]: 1 }; // сначала дешёвые -  потом дорогие
+    else if (sort === 'price_desc')
+      sortOption = { [`price.${storeKey}.current`]: -1 }; // сначала дорогие → потом дешёвые
     else if (sort === 'title_asc') sortOption = { title: 1 };
     else if (sort === 'title_desc') sortOption = { title: -1 };
 
