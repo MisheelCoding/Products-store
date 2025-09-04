@@ -60,7 +60,7 @@
             <h2 class="text-[8px] my-4">Сортировка</h2>
           </label>
           <div class="sort-container flex flex-col gap-5">
-            <ui-button v-for="(value, key) in SORT_OPTIONS" :key="key">
+            <ui-button v-for="(value, key) in SORT_OPTIONS" :key="key" @click="selectSort(key)">
               {{ value }}
             </ui-button>
           </div>
@@ -75,14 +75,15 @@ import { useCategories } from '@/composables/useCategries'
 import UiButton from '../ui/UiButton.vue'
 import { Icon } from '@iconify/vue'
 import { onMounted, ref } from 'vue'
-import { type SortOption, SORT_OPTIONS } from '@/types/products.filters'
+import { SORT_OPTIONS } from '@/types/products.filters'
+import { useSorting } from '@/composables/useSorting'
 // import type { ProductCategory } from '@/types/products'
 const { categories, refresh } = useCategories()
-
+const { sort, selectSort, fetchedProducts, loading } = useSorting()
 const scrollContainer = ref<HTMLElement | null>(null)
 
 const filterIsOpen = ref(false)
-const sort: SortOption | null = null
+
 function scroll(amount: number) {
   if (scrollContainer.value) {
     scrollContainer.value.scrollBy({
@@ -91,6 +92,13 @@ function scroll(amount: number) {
     })
   }
 }
+
+// function selectSort(el: SortOption) {
+//   sort.value = el
+//   filterIsOpen.value = false
+//   // console.log(sort.value)
+
+// }
 
 onMounted(() => {
   if (!categories.value || categories.value.length === 0) {
