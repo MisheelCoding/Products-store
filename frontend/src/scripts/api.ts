@@ -118,4 +118,18 @@ api.interceptors.response.use(
   },
 )
 
+export const publicApi: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:5007',
+  timeout: 10000,
+})
+
+publicApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Единая обработка ошибок для всех публичных запросов
+    console.error('Public API Error:', error)
+    throw error
+  },
+)
+
 export default api
