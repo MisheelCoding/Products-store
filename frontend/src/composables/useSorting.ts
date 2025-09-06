@@ -1,24 +1,22 @@
+import { SortOption } from './../types/products.filters'
 import { publicApi } from '@/scripts/api'
+import { useProducts } from '@/stores/products'
 import { API_URLS, type ApiBaseUrl } from '@/types/baseUrl'
 import type { Product } from '@/types/products'
 import { type SortOption } from '@/types/products.filters'
 import { ref } from 'vue'
+const { fetchMoreProducts } = useProducts()
 
-export function useSorting(baseUrl: ApiBaseUrl = 'public') {
+export function useSorting() {
   const sort = ref<SortOption | null>(null)
   const fetchedProducts = ref<Product[] | []>([])
   const loading = ref(false)
 
   async function selectSort(el: SortOption) {
     sort.value = el
-
+    fetchMoreProducts({ sort })
     try {
       loading.value = true
-      const { data } = await publicApi.get<Product[]>(`${API_URLS[baseUrl]}/products?sort=${el}`)
-      fetchedProducts.value = data
-      console.log(data)
-      return data
-      console.log(sort)
     } catch (e) {
       console.log(e)
       throw e
