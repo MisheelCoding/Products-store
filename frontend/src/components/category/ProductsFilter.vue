@@ -30,6 +30,7 @@
               ⬅
             </button>
             <ui-button
+              class="mr-2"
               :class="{ active: $route.params.id === 'all' }"
               :variant="$route.params.id === 'all' ? 'dark' : 'outline'"
               :to="{ name: 'category', params: { id: 'all' } }"

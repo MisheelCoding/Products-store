@@ -1,3 +1,4 @@
+import type { SortOption } from './products.filters'
 import type { ValueOf } from './valueOf'
 
 export type ProductCategory =
@@ -61,4 +62,15 @@ export interface ProductsListResponse {
   page: number
   totalPages: number
   storeKey: StoreKey
+}
+// ?? Products QUERY params
+
+export interface ProductsQueryParams {
+  q?: string
+  category?: string
+  limit: number
+  page: number
+  region?: string
+  store?: string
+  sort?: SortOption
 }
