@@ -55,7 +55,7 @@ const { categories, ensure, error, loading } = useCategories()
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import { useCategories } from '@/composables/useCategries'
+import { useCategories } from '@/composables/products/useCategries'
 import { onMounted } from 'vue'
 import SkeltonSlider from '@/skeltons/SkeltonSlider.vue'
 

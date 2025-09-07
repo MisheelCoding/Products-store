@@ -1,10 +1,10 @@
 import { computed, ref } from 'vue'
 import axios from 'axios'
-import { CATEGORY_TITLES, type ProductCategory } from '@/types/products'
+import { CATEGORY_TITLES, type CategoryTitle, type ProductCategory } from '@/types/products'
 
 type CategoryCard = {
-  id: string
-  title: string
+  id: ProductCategory
+  title: CategoryTitle
   image: string
   link: string
 }
