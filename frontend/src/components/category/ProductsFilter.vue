@@ -34,6 +34,7 @@
               :class="{ active: $route.params.id === 'all' }"
               :variant="$route.params.id === 'all' ? 'dark' : 'outline'"
               :to="{ name: 'category', params: { id: 'all' } }"
+              @click="selectCategory('all')"
               >Все</ui-button
             >
             <ui-button
@@ -41,6 +42,7 @@
               :class="{ active: $route.params.id === item.id }"
               :variant="$route.params.id === item.id ? 'dark' : 'outline'"
               :to="{ name: 'category', params: { id: item.id } }"
+              @click="selectCategory(item.id)"
               v-for="(item, i) in categories"
               :key="i"
               >{{ item.title }}</ui-button
@@ -61,7 +63,12 @@
             <h2 class="text-[8px] my-4">Сортировка</h2>
           </label>
           <div class="sort-container flex flex-col gap-5">
-            <ui-button v-for="(value, key) in SORT_OPTIONS" :key="key" @click="selectSort(key)">
+            <ui-button
+              v-for="(value, key) in SORT_OPTIONS"
+              :key="key"
+              @click="selectSort(key)"
+              :variant="isSortActive(key) ? 'dark' : 'outline'"
+            >
               {{ value }}
             </ui-button>
           </div>
@@ -72,15 +79,18 @@
 </template>
 
 <script setup lang="ts">
-import { useCategories } from '@/composables/useCategries'
-import UiButton from '../ui/UiButton.vue'
+import { useCategories } from '@/composables/products/useCategries'
+import UiButton from '@/components/ui/UiButton.vue'
 import { Icon } from '@iconify/vue'
-import { onMounted, ref } from 'vue'
-import { SORT_OPTIONS } from '@/types/products.filters'
-import { useSorting } from '@/composables/useSorting'
+import { computed, onMounted, ref } from 'vue'
+import { SORT_OPTIONS, type SortOption } from '@/types/products.filters'
+import { useSorting } from '@/composables/products/slices/useSorting'
+import { useSelectedCategory } from '@/composables/products/slices/useSelectedCategory'
+
 // import type { ProductCategory } from '@/types/products'
+const { selectCategory } = useSelectedCategory()
 const { categories, refresh } = useCategories()
-const { sort, selectSort, fetchedProducts, loading } = useSorting()
+const { sort, selectSort } = useSorting()
 const scrollContainer = ref<HTMLElement | null>(null)
 
 const filterIsOpen = ref(false)
@@ -94,12 +104,9 @@ function scroll(amount: number) {
   }
 }
 
-// function selectSort(el: SortOption) {
-//   sort.value = el
-//   filterIsOpen.value = false
-//   // console.log(sort.value)
-
-// }
+const isSortActive = computed(() => (sortKey: SortOption) => {
+  return sort.value === sortKey
+})
 
 onMounted(() => {
   if (!categories.value || categories.value.length === 0) {
