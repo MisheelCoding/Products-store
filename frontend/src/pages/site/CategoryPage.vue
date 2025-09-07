@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import ProductsContainer from '@/components/category/ProductsContainer.vue'
-import {
-  CATEGORY_TITLES,
-  type Product,
-  type ProductCategory,
-  type ProductsListResponse,
-} from '@/types/products'
-import axios from 'axios'
-import { computed, onMounted, ref, watch } from 'vue'
+import { useSelectedCategory } from '@/composables/products/slices/useSelectedCategory'
+import { useSorting } from '@/composables/products/slices/useSorting'
+import { useProducts } from '@/stores/products'
 
+import { CATEGORY_TITLES, type ProductCategory } from '@/types/products'
+
+import { computed, onMounted, watch } from 'vue'
+const { category } = useSelectedCategory()
 const props = defineProps<{ id: string }>()
 
 const title = computed(() => {
@@ -16,29 +15,24 @@ const title = computed(() => {
   return CATEGORY_TITLES[key] ?? 'undefined'
 })
 
-const products = ref<Product[]>([])
-
-async function fetchProducts() {
-  const res = await axios.get<ProductsListResponse>(`http://localhost:5007/api/public/products`, {
-    params: { category: props.id === 'all' ? '' : props.id },
-  })
-
-  products.value = res.data.items
-  // console.log(products.value)
+const { fetchProducts } = useProducts()
+const { sort } = useSorting()
+const getProductsParams = () => {
+  return { ...(props.id !== 'all' && { category: props.id, sort: sort.value }), page: 1, limit: 5 }
 }
 
-onMounted(() => {
-  fetchProducts()
+onMounted(async () => {
+  await fetchProducts(getProductsParams())
 })
 watch(
   () => props.id,
-  () => fetchProducts(),
+  () => fetchProducts(getProductsParams()),
 )
 </script>
 
 <template>
   <section class="container py-10">
-    <h1 class="text-2xl font-bold">Категория: {{ title }}</h1>
+    <h1 class="text-2xl font-bold">Категория: {{ title }} {{ category }}</h1>
 
     <ProductsContainer />
   </section>

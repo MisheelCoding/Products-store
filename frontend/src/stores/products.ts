@@ -1,4 +1,6 @@
+import { API_ENDPOINTS } from './../types/baseUrl'
 import { publicApi } from '@/scripts/api'
+import { API_URLS } from '@/types/baseUrl'
 import type { Product, ProductsListResponse, ProductsQueryParams, StoreKey } from '@/types/products'
 import { defineStore } from 'pinia'
 
@@ -16,17 +18,21 @@ export const useProducts = defineStore('products', {
   }),
   actions: {
     //***  загрузка первых продуктов
-    async fetchProducts(params: ProductsQueryParams) {
+    async fetchProducts(params: ProductsQueryParams = { page: 1, limit: 5 }) {
       this.loading = true
       const finalParams = {
         ...params,
         page: params.page ?? this.page,
         limit: params.limit ?? this.limit,
       }
+
       try {
-        const { data } = await publicApi.get<ProductsListResponse>(`api/products`, {
-          params: finalParams,
-        })
+        const { data } = await publicApi.get<ProductsListResponse>(
+          `${API_URLS.public}${API_ENDPOINTS.products}`,
+          {
+            params: finalParams,
+          },
+        )
 
         this.products = data.items
         this.total = data.total
@@ -45,18 +51,21 @@ export const useProducts = defineStore('products', {
     },
     //***  загрузка следущой партий
     async fetchMoreProducts() {
-      if (this.isFetchingMore && !this.hasMore && this.loading) return // выходим сразу если
+      if (this.isFetchingMore || !this.hasMore || this.loading) return // выходим сразу если
 
       this.isFetchingMore = true
       const nextPage = this.page + 1
 
       try {
-        const { data } = await publicApi.get<ProductsListResponse>('api/products', {
-          params: {
-            page: nextPage,
-            limit: this.limit,
+        const { data } = await publicApi.get<ProductsListResponse>(
+          `${API_URLS.public}${API_ENDPOINTS.products}`,
+          {
+            params: {
+              page: nextPage,
+              limit: this.limit,
+            },
           },
-        })
+        )
 
         this.products = [...this.products, ...data.items]
         this.page = data.page
