@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ title }}</h2>
+    <h2>{{ product.title }}</h2>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ const props = defineProps<{
   product: Product
 }>()
 
-const { title, effectivePrice, imageUrl, isAvailable } = toRefs(props.product)
+// const { title, effectivePrice, imageUrl, isAvailable } = toRefs(props.product)
 </script>
 
 <style scoped></style>
