@@ -84,13 +84,12 @@ import UiButton from '@/components/ui/UiButton.vue'
 import { Icon } from '@iconify/vue'
 import { computed, onMounted, ref } from 'vue'
 import { SORT_OPTIONS, type SortOption } from '@/types/products.filters'
-import { useSorting } from '@/composables/products/slices/useSorting'
-import { useSelectedCategory } from '@/composables/products/slices/useSelectedCategory'
+import { useCoordinatorFilter } from '@/composables/products/useProductsCoordinator'
 
 // import type { ProductCategory } from '@/types/products'
-const { selectCategory } = useSelectedCategory()
+const { category, loadProducts, getQueryParams, loading, selectCategory, selectSort, sort } =
+  useCoordinatorFilter()
 const { categories, refresh } = useCategories()
-const { sort, selectSort } = useSorting()
 const scrollContainer = ref<HTMLElement | null>(null)
 
 const filterIsOpen = ref(false)
