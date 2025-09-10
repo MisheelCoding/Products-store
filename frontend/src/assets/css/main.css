@@ -124,3 +124,19 @@ a {
 hr {
   border-color: var(--border);
 }
+
+.btn {
+  cursor: pointer;
+}
+
+/* Для Chrome, Safari, Edge, Opera */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Для Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
