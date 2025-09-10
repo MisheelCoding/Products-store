@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper min-h-screen">
+  <div class="wrapper mb-10">
     <!-- *** Filter -->
     <div class="filter relative flex gap-5 justify-between">
       <UiButton class="flex items-center gap-1" variant="dark" @click="filterIsOpen = !filterIsOpen"
@@ -11,7 +11,7 @@
       <Transition name="collapse">
         <div
           v-show="filterIsOpen && categories.length"
-          class="filter-container absolute left-0 top-15 max-w-[25rem] max-h-[19rem] border rounded-3xl overflow-x-hidden p-5"
+          class="filter-container absolute left-0 top-15 max-w-[25rem] max-h-[19rem] border rounded-3xl overflow-x-hidden p-5 z-10 bg-[#ececec]"
         >
           <!-- arrow -->
 
@@ -84,13 +84,12 @@ import UiButton from '@/components/ui/UiButton.vue'
 import { Icon } from '@iconify/vue'
 import { computed, onMounted, ref } from 'vue'
 import { SORT_OPTIONS, type SortOption } from '@/types/products.filters'
-import { useSorting } from '@/composables/products/slices/useSorting'
-import { useSelectedCategory } from '@/composables/products/slices/useSelectedCategory'
+import { useCoordinatorFilter } from '@/composables/products/useProductsCoordinator'
 
 // import type { ProductCategory } from '@/types/products'
-const { selectCategory } = useSelectedCategory()
+const { category, loadProducts, getQueryParams, loading, selectCategory, selectSort, sort } =
+  useCoordinatorFilter()
 const { categories, refresh } = useCategories()
-const { sort, selectSort } = useSorting()
 const scrollContainer = ref<HTMLElement | null>(null)
 
 const filterIsOpen = ref(false)
