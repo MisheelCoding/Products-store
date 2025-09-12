@@ -20,18 +20,15 @@
 
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue'
+
 import 'swiper/css'
-
-interface Breakpoints {
-  [k: number]: { slidesPerView: number; spaceBetween?: number }
-}
-
+type SwiperOptionsType = ConstructorParameters<typeof Swiper>[0]
 withDefaults(
   defineProps<{
     count?: number
     heightClass?: string
     spaceBetween?: number
-    breakpoints?: Breakpoints
+    breakpoints?: Record<number | string, SwiperOptionsType>
   }>(),
   {
     count: 5,
