@@ -1,4 +1,5 @@
 <template>
+
   <article
     v-if="props.product"
     class="product-card max-w-[18rem] rounded-2xl shadow transition shadow-neutral-800/70 h-[25rem] hover overflow-hidden flex flex-col relative gap-3"
@@ -61,6 +62,7 @@
       </div>
     </div>
   </article>
+
 </template>
 
 <script setup lang="ts">
@@ -77,9 +79,10 @@ const props = defineProps<{
   variant: productCardVariant
 }>()
 
+
 const { title, effectivePrice, imageUrl, isAvailable, description, unit } = toRefs(props.product)
 const ruUnit = UNIT_INFO[unit.value]
-</script>
+
 
 <style scoped lang="scss">
 .product-card__controll-btn {

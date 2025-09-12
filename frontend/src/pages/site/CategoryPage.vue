@@ -21,7 +21,10 @@ onMounted(async () => {
 
 <template>
   <section class="container py-10">
+
     <h1 class="text-2xl font-bold">Категория: {{ title }}</h1>
+
+
 
     <ProductsContainer />
   </section>
