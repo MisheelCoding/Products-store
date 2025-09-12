@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 export const useProducts = defineStore('products', {
   state: () => ({
     products: [] as Product[],
+    byId: {} as Record<string, Product>,
     loading: false as boolean,
     page: 1,
     limit: 5,
@@ -35,6 +36,14 @@ export const useProducts = defineStore('products', {
         )
 
         this.products = data.items
+        this.byId = data.items.reduce(
+          (acc, product) => {
+            acc[product._id] = product
+            return acc
+          },
+          {} as Record<string, Product>,
+        )
+
         this.total = data.total
         this.totalPages = data.totalPages
         this.storeKey = data.storeKey

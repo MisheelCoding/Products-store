@@ -31,12 +31,16 @@ export interface PriceInfo {
 }
 // ключ магазина
 export type StoreKey = string
+
+type unitType = 'kg' | 'g' | 'pcs' | 'l' | 'ml' | 'pack'
+
 //?? Продукт
 export interface Product {
   _id: string
   title: string
+  description?: string
   category: ProductCategory
-  unit: 'kg' | 'g' | 'pcs' | 'l' | 'ml' | 'pack'
+  unit: unitType
   store: string
   quantityStep: number
   imageUrl: string
@@ -74,3 +78,12 @@ export interface ProductsQueryParams {
   store?: string
   sort?: SortOption
 }
+
+export const UNIT_INFO = {
+  kg: { label: 'кг', full: 'килограмм' },
+  g: { label: 'г', full: 'грамм' },
+  pcs: { label: 'шт', full: 'штука' },
+  l: { label: 'л', full: 'литр' },
+  ml: { label: 'мл', full: 'миллилитр' },
+  pack: { label: 'упак', full: 'упаковка' },
+} as const satisfies Record<string, { label: string; full: string }>
