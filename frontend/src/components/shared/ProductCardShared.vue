@@ -1,4 +1,5 @@
 <template>
+
   <article
     v-if="props.product"
     class="product-card flex gap-3 relative rounded-2xl shadow transition shadow-neutral-800/70 hover overflow-hidden"
@@ -86,6 +87,7 @@
       </div>
     </div>
   </article>
+
 </template>
 
 <script setup lang="ts">
@@ -102,6 +104,7 @@ const props = defineProps<{
   showDesc: boolean
   variant: productCardVariant
 }>()
+
 
 const { title, effectivePrice, description, unit, _id } = toRefs(props.product)
 const ruUnit = UNIT_INFO[unit.value]
@@ -135,6 +138,7 @@ function onAdd() {
   // qty.value = cart.lines[_id.value]?.qty ?? 1
 }
 </script>
+
 
 <style scoped lang="scss">
 .product-card__controll-btn {

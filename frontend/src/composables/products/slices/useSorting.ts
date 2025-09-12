@@ -11,6 +11,7 @@ export function useSorting() {
   async function selectSort(el: SortOption) {
     _sort.value = el
     _loading.value = true
+
   }
   return {
     sort: _sort,
