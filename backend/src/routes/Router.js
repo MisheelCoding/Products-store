@@ -6,6 +6,7 @@ import adminProductsRoute from '#routes/admin/products.route.js';
 import adminStoresRoute from '#routes/admin/store.route.js';
 import courierRoute from '#routes/courier/courier.route.js';
 import publicProductsRoute from '#routes/public/products.route.js';
+import userRoute from '#routes/user/user.route.js';
 const router = express.Router();
 
 router.use('/auth', authRoute);
@@ -18,7 +19,8 @@ router.use('/admin/stores', adminStoresRoute);
 router.use('/courier', courierRoute);
 // *** PUBLIC
 router.use('/public', publicProductsRoute);
-// **
+// **USER
+router.use('/user', userRoute);
 
 // import setupRoutes from '#routes/setup.js';
 // router.use('/setup', setupRoutes);

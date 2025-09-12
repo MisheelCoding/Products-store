@@ -8,8 +8,11 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import HeaderShared from '@/components/shared/HeaderShared.vue'
-import FooterShared from '@/components/shared/FooterShared.vue'
+
+import { defineAsyncComponent } from 'vue'
+
+const HeaderShared = defineAsyncComponent(() => import('@/components/shared/HeaderShared.vue'))
+const FooterShared = defineAsyncComponent(() => import('@/components/shared/FooterShared.vue'))
 </script>
 
 <style scoped></style>
