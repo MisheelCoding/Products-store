@@ -7,12 +7,7 @@ import { TOKEN } from '#models/Token.js';
 import mongoose from 'mongoose';
 import { buildTokenPayload, toClientUser } from '#utils/mapUser.js';
 // *** HELPER for duble code
-const mapUser = (user) => ({
-  id: user._id,
-  username: user.username,
-  roles: user.roles,
-});
-
+//
 class AuthService {
   // *** login
   async login(username, password) {

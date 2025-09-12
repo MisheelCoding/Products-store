@@ -16,11 +16,13 @@ export const useProducts = defineStore('products', {
     totalPages: 0, // общее колл стр
     hasMore: true, // есть еще товаров
     isFetchingMore: false, // загрузить еще
+    lastParams: {} as ProductsQueryParams,
   }),
   actions: {
     //***  загрузка первых продуктов
     async fetchProducts(params: ProductsQueryParams = { page: 1, limit: 5 }) {
       this.loading = true
+      this.lastParams = params
       const finalParams = {
         ...params,
         page: params.page ?? this.page,
@@ -64,15 +66,13 @@ export const useProducts = defineStore('products', {
 
       this.isFetchingMore = true
       const nextPage = this.page + 1
+      const params = { ...this.lastParams, page: nextPage, limit: this.limit }
 
       try {
         const { data } = await publicApi.get<ProductsListResponse>(
           `${API_URLS.public}${API_ENDPOINTS.products}`,
           {
-            params: {
-              page: nextPage,
-              limit: this.limit,
-            },
+            params,
           },
         )
 
@@ -82,6 +82,8 @@ export const useProducts = defineStore('products', {
       } catch (e) {
         console.log(e)
         throw e
+      } finally {
+        this.isFetchingMore = false
       }
     },
   },

@@ -8,14 +8,14 @@ import { useSelectedCategory } from './slices/useSelectedCategory'
 export function useCoordinatorFilter() {
   const { loading: sortLoading, selectSort, sort } = useSorting()
   const { category, selectCategory, loading: categoryLoading } = useSelectedCategory()
-  const { fetchProducts } = useProducts()
+  const { fetchProducts, limit } = useProducts()
 
   const loading = computed(() => sortLoading.value || categoryLoading.value)
 
   // fn
   const getQueryParams = () => {
     const params: ProductsQueryParams = {
-      limit: 5,
+      limit: limit,
       page: 1,
     }
 
