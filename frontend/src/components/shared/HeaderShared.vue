@@ -22,7 +22,7 @@
     </nav> -->
 
     <div class="header__actions flex gap-1">
-      <router-link to="/favorite" class="header__favorite">
+      <router-link :to="{ name: 'favorites' }" class="header__favorite">
         <Icon
           icon="material-symbols-light:favorite-outline"
           width="30px"

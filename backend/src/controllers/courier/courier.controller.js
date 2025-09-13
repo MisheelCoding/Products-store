@@ -1,4 +1,4 @@
-import { courierService } from '#services/user/courier.service.js';
+import { courierService } from '#services/courier/courier.service.js';
 
 class CourierContoller {
   async getMyOrders(req, res, next) {
@@ -21,6 +21,11 @@ class CourierContoller {
       res.status(400).json({ message: e });
       next();
     }
+  }
+
+  async activeOrders(req, res, next) {
+    try {
+    } catch (e) {}
   }
 }
 

@@ -75,7 +75,9 @@ export const useProducts = defineStore('products', {
             params,
           },
         )
-
+        data.items.forEach((product) => {
+          this.byId[product._id] = product
+        })
         this.products = [...this.products, ...data.items]
         this.page = data.page
         this.hasMore = data.page < data.totalPages
