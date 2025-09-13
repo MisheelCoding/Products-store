@@ -1,6 +1,6 @@
-import { type Product } from './../types/products'
+import { type Product } from '@/types/products'
 import { defineStore } from 'pinia'
-import { useProducts } from './products'
+import { useProducts } from '@/stores/products'
 
 export type CartLine = {
   productId: string
@@ -14,7 +14,7 @@ type CartState = {
 
 type CartItemView = {
   line: CartLine
-  product?: Product
+  product: Product
   subtotal: number
 }
 

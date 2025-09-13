@@ -77,6 +77,7 @@ class UserController {
   async addAddress(req, res, next) {
     try {
       const user = await userService.addAddress(req.user.id, req.body);
+
       res.json(user);
     } catch (e) {
       res.status(400).json({ message: e });
@@ -100,6 +101,15 @@ class UserController {
       const { addressId } = req.body;
       const deleted = await userService.deleteAddress(req.user.id, addressId);
       res.json(deleted);
+    } catch (e) {
+      res.status(400).json({ message: e });
+      next();
+    }
+  }
+  async getAddresses(req, res, next) {
+    try {
+      const addresses = userService.getAddresses(req.user.id);
+      res.json(addresses);
     } catch (e) {
       res.status(400).json({ message: e });
       next();

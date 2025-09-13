@@ -1,6 +1,7 @@
 // src/services/public/products.service.js
 import { PRODUCT } from '#models/Product.js';
 import { clamp } from '#utils/limitPage.js';
+import mapProduct from '#utils/mapProduct.js';
 
 const DEF_STORE = process.env.DEFAULT_STORE || 'default';
 
@@ -34,12 +35,7 @@ class ProductsService {
       PRODUCT.countDocuments(filter),
     ]);
 
-    const mapped = items.map((p) => ({
-      ...p,
-      effectivePrice: p?.price?.[storeKey] || null, // { current, old, discountPercent }
-      effectiveStock: p?.stockByStore?.[storeKey] ?? null, // число или null
-      effectiveAvailability: p?.availabilityByStore?.[storeKey] ?? null, // bool или null
-    }));
+    const mapped = items.map((p) => mapProduct(p, storeKey));
 
     return {
       items: mapped,
@@ -54,12 +50,7 @@ class ProductsService {
     const storeKey = store || region || DEF_STORE;
     const doc = await PRODUCT.findById(id).lean();
     if (!doc) return null;
-    return {
-      ...doc,
-      effectivePrice: doc?.price?.[storeKey] || null,
-      effectiveStock: doc?.stockByStore?.[storeKey] ?? null,
-      effectiveAvailability: doc?.availabilityByStore?.[storeKey] ?? null,
-    };
+    mapProduct(doc, storeKey);
   }
 
   async categories({ region = 'default', store } = {}) {

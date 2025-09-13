@@ -14,11 +14,15 @@ class OrderController {
   async getOrders(req, res, next) {
     try {
       const userId = req.user.id;
-      const orders = await orderService.getUserOrders(userId); // ← имя метода исправил
+      const orders = await orderService.getUserOrders(userId);
       return res.status(200).json(orders);
     } catch (e) {
       return res.status(400).json({ message: e.message });
     }
+  }
+  async activeOrders(req, res, next) {
+    try {
+    } catch (e) {}
   }
 }
 

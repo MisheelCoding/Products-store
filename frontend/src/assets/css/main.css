@@ -140,3 +140,12 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+input {
+  outline: none;
+}
+
+.inp {
+  border-bottom: 1px solid black;
+  height: 3rem;
+}

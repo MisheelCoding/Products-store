@@ -4,7 +4,7 @@
       class="justify-self-center"
       :product="p"
       :show-desc="true"
-      variant="favorite"
+      variant="default"
       v-for="p in products"
       :key="p._id"
     ></ProductCardShared>
@@ -12,7 +12,7 @@
       <SkeltonProductCard
         v-for="(card, i) in productsStore.limit"
         :key="`skeleton-${i}`"
-        :variant="'favorite'"
+        :variant="'default'"
         :show-desc="false"
         class="justify-self-center"
       />

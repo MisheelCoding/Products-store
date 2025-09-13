@@ -123,6 +123,8 @@ export const publicApi: AxiosInstance = axios.create({
   timeout: 10000,
 })
 
+//*** без авторизаций запросы
+
 publicApi.interceptors.response.use(
   (response) => response,
   (error) => {
