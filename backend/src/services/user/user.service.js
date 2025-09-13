@@ -1,5 +1,6 @@
 import { ORDER } from '#models/Order.js';
 import { USER } from '#models/User.js';
+import mapProduct from '#utils/mapProduct.js';
 import bcrypt from 'bcrypt';
 
 class UserSerivece {
@@ -29,9 +30,11 @@ class UserSerivece {
     return await ORDER.find({ user: userId }).populate('items.product');
   }
   // *** получить сохранненные
-  async getFavorites(userId) {
-    const user = await USER.findById(userId).populate('favorite');
-    return user.favorite;
+  async getFavorites(userId, storeKey = 'default') {
+    const user = await USER.findById(userId).populate('favorite').lean();
+
+    const mapped = user.favorite.map((p) => mapProduct(p, storeKey));
+    return mapped;
   }
   // *** добавить в сохранные
   async addToFavorites(userId, productId) {
@@ -74,7 +77,12 @@ class UserSerivece {
     await user.save();
     return user;
   }
-  // ***
+  // ***получить адресса
+  async getAddresses(userId) {
+    const user = await USER.findById(userId).lean();
+    if (!user) throw new Error('user not found');
+    return user.addresses || [];
+  }
 }
 
 export const userService = new UserSerivece();

@@ -20,6 +20,12 @@ const orderSchema = new mongoose.Schema(
     address: { type: String, required: true },
     phone: { type: String, required: true },
     region: { type: String, required: true },
+
+    deliviryWindow: {
+      from: { type: Date, default: null },
+      to: { type: Date, default: null },
+    },
+    message: { type: String, default: '' }, //для коммента пользовтеля
   },
   { timestamps: true },
 );

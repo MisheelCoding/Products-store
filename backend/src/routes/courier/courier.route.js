@@ -1,7 +1,7 @@
 import express from 'express';
 import { authMiddleware } from '#middlewares/auth/auth.js';
 import { checkRole } from '#middlewares/auth/checkRole.js';
-import { courierContoller } from '#controllers/user/courier.controller.js';
+import { courierContoller } from '#controllers/courier/courier.controller.js';
 
 const router = express.Router();
 
