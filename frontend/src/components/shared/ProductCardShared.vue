@@ -1,7 +1,7 @@
 <template>
   <article
     v-if="props.product"
-    class="product-card flex gap-3 relative rounded-2xl shadow transition shadow-neutral-800/70 hover overflow-hidden max-w-[30rem]"
+    class="product-card flex gap-3 relative rounded-2xl shadow transition shadow-neutral-800/70 hover overflow-hidden max-w-[20rem]"
     :class="{
       'flex-row max-h-[7rem] w-full ': variant === 'cart',
       ' h-[26rem] max-w-[20rem]  flex-col': variant === 'default' || variant === 'favorite',

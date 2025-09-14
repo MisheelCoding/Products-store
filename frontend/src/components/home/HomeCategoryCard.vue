@@ -7,7 +7,7 @@
     />
     <UiButton
       :to="{ name: 'category', params: { id: category.id } }"
-      class="absolute left-1/2 bottom-5 -translate-x-1/2 z-50"
+      class="!absolute -translate-x-1/2 left-1/2 bottom-0 z-50"
       type="button"
       variant="white"
       >{{ category.title }}</UiButton

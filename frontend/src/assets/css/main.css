@@ -83,6 +83,9 @@ h6 {
   font-family: 'Onder', sans-serif;
 }
 
+.title {
+  font-family: 'Onder', sans-serif;
+}
 /* Примеры семантических утилит под токены */
 .card {
   background: var(--card);
