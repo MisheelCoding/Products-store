@@ -1,21 +1,23 @@
 <template>
-  <div class="prodcuts__list gap-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-full">
-    <ProductCardShared
-      :variant="'favorite'"
-      :show-desc="false"
-      :product="p"
-      v-for="p in storeFavorite.favorites"
-      :key="p._id"
-    />
-
-    <template v-if="storeFavorite.loading">
-      <SkeltonProductCard
-        v-for="i in 5"
-        :key="`skelton-${i}`"
+  <div class="container">
+    <div class="prodcuts__list gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-full">
+      <ProductCardShared
         :variant="'favorite'"
         :show-desc="false"
+        :product="p"
+        v-for="p in storeFavorite.favorites"
+        :key="p._id"
       />
-    </template>
+
+      <template v-if="storeFavorite.loading">
+        <SkeltonProductCard
+          v-for="i in 5"
+          :key="`skelton-${i}`"
+          :variant="'favorite'"
+          :show-desc="false"
+        />
+      </template>
+    </div>
   </div>
 </template>
 

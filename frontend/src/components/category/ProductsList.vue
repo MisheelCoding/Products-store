@@ -1,5 +1,5 @@
 <template>
-  <div class="prodcuts__list gap-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+  <div class="prodcuts__list gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
     <ProductCardShared
       class="justify-self-center"
       :product="p"

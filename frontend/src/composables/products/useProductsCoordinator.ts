@@ -38,7 +38,14 @@ export function useCoordinatorFilter() {
     }
   }
 
-  watch([category, sort], loadProducts, { deep: true })
+  watch([category, sort], loadProducts)
+  // let timer: ReturnType<typeof setTimeout> | null = null
+  // watch([category, sort], () => {
+  //   if (timer) clearTimeout(timer)
+  //   timer = setTimeout(() => {
+  //     loadProducts()
+  //   }, 300) // 300мс задержка
+  // })
 
   return {
     //states
