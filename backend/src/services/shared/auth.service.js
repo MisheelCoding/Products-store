@@ -6,16 +6,37 @@ import { genereateToken, saveToken, deleteToken, findToken } from '#utils/token.
 import { TOKEN } from '#models/Token.js';
 import mongoose from 'mongoose';
 import { buildTokenPayload, toClientUser } from '#utils/mapUser.js';
+
 // *** HELPER for duble code
 //
 class AuthService {
   // *** login
-  async login(username, password) {
-    const user = await USER.findOne({ username });
-    if (!user) throw new Error(`Пользователь с ${username} таким именем не существет`);
+  // async login(username, password) {
+  //   const user = await USER.findOne({ username });
+  //   if (!user) throw new Error(`Пользователь с ${username} таким именем не существет`);
 
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) throw new Error(`Не верный пароль`);
+  //   const isValid = await bcrypt.compare(password, user.password);
+  //   if (!isValid) throw new Error(`Не верный пароль`);
+
+  //   const tokens = genereateToken(buildTokenPayload(user));
+  //   await saveToken(user._id, tokens.refreshToken);
+  //   return { ...tokens, user: toClientUser(user) };
+  // }
+  async login(identifier, password) {
+    const id = (identifier || '').trim();
+    const pwd = password || '';
+
+    const INVALID = new Error('Неверные логин/email или пароль');
+
+    const isEmail = id.includes('@', 0);
+
+    const query = isEmail ? { email: id } : { username: id };
+
+    const user = await USER.findOne(query);
+    if (!user) throw INVALID;
+
+    const ok = bcrypt.compare(pwd, user.password);
+    if (!ok) throw INVALID;
 
     const tokens = genereateToken(buildTokenPayload(user));
     await saveToken(user._id, tokens.refreshToken);
@@ -101,12 +122,12 @@ class AuthService {
     const user = await USER.findOne({ email });
 
     // единый ответ (не палим существование e-mail)
-    const generic = { message: 'Если такой e-mail существует — письмо отправлено' };
+    const generic = { message: 'Если такой e-mail существует - письмо отправлено' };
     if (!user) return generic;
 
     const token = jwt.sign(
       { id: user._id },
-      process.env.JWT_RESET_SECRET, // <-- отдельный секрет
+      process.env.JWT_RESET_SECRET, // env
       { expiresIn: '15m' },
     );
 
@@ -122,7 +143,7 @@ class AuthService {
   }
 
   async changePassword(token, newPassword) {
-    const payload = jwt.verify(token, process.env.JWT_RESET_SECRET); // <-- тот же секрет
+    const payload = jwt.verify(token, process.env.JWT_RESET_SECRET); // тот же секрет
     const user = await USER.findById(payload.id);
     if (!user) throw new Error('user not found');
 
