@@ -87,8 +87,7 @@ import { SORT_OPTIONS, type SortOption } from '@/types/products.filters'
 import { useCoordinatorFilter } from '@/composables/products/useProductsCoordinator'
 
 // import type { ProductCategory } from '@/types/products'
-const { category, loadProducts, getQueryParams, loading, selectCategory, selectSort, sort } =
-  useCoordinatorFilter()
+const { selectCategory, selectSort, sort } = useCoordinatorFilter()
 const { categories, refresh } = useCategories()
 const scrollContainer = ref<HTMLElement | null>(null)
 

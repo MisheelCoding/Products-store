@@ -21,6 +21,8 @@ export const useProducts = defineStore('products', {
   actions: {
     //***  загрузка первых продуктов
     async fetchProducts(params: ProductsQueryParams = { page: 1, limit: 5 }) {
+      if (this.loading) return //выходим если делаем запрос
+
       this.loading = true
       this.lastParams = params
       const finalParams = {
