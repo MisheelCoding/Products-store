@@ -1,15 +1,15 @@
 <template>
   <article
     v-if="props.product"
-    class="product-card flex gap-3 relative rounded-2xl shadow transition shadow-neutral-800/70 hover overflow-hidden max-w-[20rem]"
+    class="product-card flex gap-3 relative rounded-2xl shadow transition shadow-neutral-800/70 hover overflow-hidden max-w-[25rem]"
     :class="{
       'flex-row max-h-[7rem] w-full ': variant === 'cart',
-      ' h-[26rem] max-w-[20rem]  flex-col': variant === 'default' || variant === 'favorite',
+      'h-[26rem] max-w-[20rem]  flex-col': variant === 'default' || variant === 'favorite',
     }"
   >
     <div
       class="product-card__img-container group min-h-0 flex-2/3 overflow-hidden !rounded-2xl"
-      :class="{ 'basis-[5.4rem] !shrink-0 grow-0': variant === 'cart' }"
+      :class="{ 'basis-[5.4rem] !shrink-0 grow-0 !flex-1/3': variant === 'cart' }"
     >
       <img
         class="product-card__img w-full h-full object-cover group-hover:scale-110 transition"
@@ -44,7 +44,7 @@
       </button>
 
       <div
-        class="flex !flex-col sm:!flex-row gap-3 justify-between"
+        class="flex !flex-col gap-3 justify-between"
         :class="{
           'flex-row': variant === 'cart',
           'flex-col': variant === 'default' || variant === 'favorite',
