@@ -1,9 +1,21 @@
 import mongoose from 'mongoose';
 
+const savedCardSchema = new mongoose.Schema({
+  paymentMethodId: { type: String, required: true }, // id от ЮKassa
+  type: { type: String }, // тип карты: Visa, MasterCard, Мир
+  last4: { type: String }, // последние 4 цифры
+  expMonth: { type: String },
+  expYear: { type: String },
+  title: { type: String }, // "Bank card *4444"
+  createdAt: { type: Date, default: Date.now },
+  isDefault: { type: Boolean, default: false },
+  status: { type: String, enum: ['active', 'deleted'], default: 'active' },
+});
+
 const addressSchema = new mongoose.Schema(
   {
     label: { type: String, default: 'Мой адресс' },
-    addressLine: { type: String, required: true },
+    addressLine: { type: String, required: true, index: true },
     city: { type: String },
     country: { type: String },
     phone: { type: String },
@@ -25,6 +37,7 @@ const userSchema = new mongoose.Schema(
     addresses: [addressSchema],
     region: { type: String, required: true },
     store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
+    savedCards: [savedCardSchema],
   },
   { timestamps: true },
 );
