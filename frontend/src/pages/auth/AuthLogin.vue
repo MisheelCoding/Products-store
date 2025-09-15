@@ -1,57 +1,89 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-
+import { Icon } from '@iconify/vue'
+import { useForm, useField } from 'vee-validate'
+import * as yup from 'yup'
+import UiButton from '@/components/ui/UiButton.vue'
 const auth = useAuthStore()
 
-const username = ref<string>('')
-const password = ref<string>('')
+const schema = yup.object({
+  username: yup.string().required('Введите имя пользователя или Email').min(3, 'Минимум 3 символа'),
+  password: yup.string().required('Введите пароль').min(6, 'Минимум 6 символов'),
+})
+
+const { handleSubmit } = useForm({
+  validationSchema: schema,
+})
+
+const { value: username, errorMessage: usernameError } = useField('username')
+const { value: password, errorMessage: passwordError } = useField('password')
+
 const showPwd = ref<boolean>(false)
 
-async function submit() {
+const submit = handleSubmit(async (values) => {
   try {
-    await auth.login(username.value, password.value)
+    await auth.login(values.username, values.password)
     // для быстрой проверки:
     console.log('Логин ок:', auth.user)
   } catch (e) {
     // ошибка уже в auth.error
     console.log('err', e)
   }
-}
+})
 </script>
 
 <template>
-  <form @submit.prevent="submit" style="max-width: 360px; display: grid; gap: 8px">
-    <h3>Вход</h3>
+  <div class="container relative">
+    <form class="flex flex-col gap-5 justify-center items-center min-h-[85svh]" @submit="submit">
+      <h1>Вход</h1>
+      <div class="div flex flex-col gap-5 !max-w-[22rem] w-full">
+        <input
+          class="auth-inp"
+          v-model="username"
+          type="text"
+          placeholder="username"
+          autocomplete="username"
+        />
+        <p class="text-red-500 min-h-[1.1875rem] error">
+          <span v-if="usernameError">{{ usernameError }}</span>
+        </p>
 
-    <input v-model="username" type="text" placeholder="username" autocomplete="username" required />
+        <div class="flex gap-3 relative items-center">
+          <input
+            class="auth-inp flex-1"
+            v-model="password"
+            :type="showPwd ? 'text' : 'password'"
+            placeholder="Пароль"
+            autocomplete="current-password"
+          />
+          <button class="absolute right-0" type="button" @click="showPwd = !showPwd">
+            <Icon
+              :icon="showPwd ? 'weui:eyes-off-outlined' : 'weui:eyes-on-outlined'"
+              width="25px"
+              height="25px"
+              style="color: #000"
+            />
+          </button>
+        </div>
+        <p class="text-red-500 min-h-[1.1875rem] error">
+          <span v-if="passwordError">{{ passwordError }}</span>
+        </p>
 
-    <div style="display: flex; gap: 6px">
-      <input
-        v-model="password"
-        :type="showPwd ? 'text' : 'password'"
-        placeholder="Пароль"
-        autocomplete="current-password"
-        required
-        style="flex: 1"
-      />
-      <button type="button" @click="showPwd = !showPwd">
-        {{ showPwd ? 'Скрыть' : 'Показать' }}
-      </button>
-    </div>
+        <ui-button class="h-[3rem]" variant="dark" type="submit" :disabled="auth.loading">
+          {{ auth.loading ? 'Вхожу…' : 'Войти' }}
+        </ui-button>
 
-    <button type="submit" :disabled="auth.loading">
-      {{ auth.loading ? 'Вхожу…' : 'Войти' }}
-    </button>
+        <p v-if="auth.error" style="color: #d33; margin: 0">
+          {{ auth.error }}
+        </p>
 
-    <p v-if="auth.error" style="color: #d33; margin: 0">
-      {{ auth.error }}
-    </p>
-
-    <p v-if="auth.user" style="color: #2b7">
-      Привет, {{ auth.user.username ?? auth.user.username }}!
-    </p>
-  </form>
+        <p v-if="auth.user" style="color: #2b7">
+          Привет, {{ auth.user.username ?? auth.user.username }}!
+        </p>
+      </div>
+    </form>
+  </div>
 </template>
 
 <style scoped>
@@ -61,5 +93,9 @@ button {
 }
 button {
   cursor: pointer;
+}
+
+.error {
+  font-size: 0.8rem;
 }
 </style>
