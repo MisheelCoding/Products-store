@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container min-h-screen">
     <div class="prodcuts__list gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-full">
       <ProductCardShared
         :variant="'favorite'"
