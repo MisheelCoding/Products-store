@@ -8,14 +8,14 @@ export type CartLine = {
   priceSnapshot: number // цена в момент добавления
 }
 
-type CartState = {
-  lines: Record<string, CartLine>
-}
-
 type CartItemView = {
   line: CartLine
   product: Product
   subtotal: number
+}
+
+type CartState = {
+  lines: Record<string, CartLine>
 }
 
 export const useCart = defineStore('cart', {

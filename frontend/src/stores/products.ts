@@ -54,6 +54,7 @@ export const useProducts = defineStore('products', {
         this.page = data.page
         this.hasMore = data.page < data.totalPages
         if (params.limit !== undefined) this.limit = params.limit
+        // console.log(this.byId)
       } catch (e) {
         console.log(e)
         this.loading = false
