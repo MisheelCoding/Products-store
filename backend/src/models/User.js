@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
     verified: { type: Boolean, default: false },
     isBanned: { type: Boolean, default: false },
     addresses: [addressSchema],
-    region: { type: String, required: true },
+    region: { type: String },
     store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
     savedCards: [savedCardSchema],
   },
