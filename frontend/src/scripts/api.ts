@@ -99,7 +99,8 @@ api.interceptors.response.use(
     const isAuthPath =
       url.includes('/api/auth/refresh') ||
       url.includes('/api/auth/login') ||
-      url.includes('/api/auth/logout')
+      url.includes('/api/auth/logout') ||
+      url.includes('/api/auth/register')
 
     // авто-refresh по 401
     if (status === 401 && !original._retry && !isAuthPath) {
@@ -108,7 +109,7 @@ api.interceptors.response.use(
         await doRefresh()
         return api(original)
       } catch (e) {
-        // refresh не удался — чистим сессию
+        // refresh не удался  чистим сессию
         store.logout()
         return Promise.reject(e)
       }

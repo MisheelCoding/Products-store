@@ -87,8 +87,8 @@ class UserController {
   // *** обновить адрес
   async updateAddress(req, res, next) {
     try {
-      const { addressId, ...rest } = req.body;
-      const updated = await userService.updateAddress(req.user.id, addressId, rest);
+      const { addressId } = req.params;
+      const updated = await userService.updateAddress(req.user.id, addressId, req.body);
       res.json(updated);
     } catch (e) {
       res.status(400).json({ message: e });
@@ -98,7 +98,7 @@ class UserController {
   // *** удалить адрес
   async deleteAddress(req, res, next) {
     try {
-      const { addressId } = req.body;
+      const { addressId } = req.params;
       const deleted = await userService.deleteAddress(req.user.id, addressId);
       res.json(deleted);
     } catch (e) {
@@ -108,7 +108,7 @@ class UserController {
   }
   async getAddresses(req, res, next) {
     try {
-      const addresses = userService.getAddresses(req.user.id);
+      const addresses = await userService.getAddresses(req.user.id);
       res.json(addresses);
     } catch (e) {
       res.status(400).json({ message: e });

@@ -11,6 +11,7 @@ import { buildTokenPayload, toClientUser } from '#utils/mapUser.js';
 //
 class AuthService {
   // *** login
+
   // async login(username, password) {
   //   const user = await USER.findOne({ username });
   //   if (!user) throw new Error(`Пользователь с ${username} таким именем не существет`);
