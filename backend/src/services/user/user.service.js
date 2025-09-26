@@ -54,11 +54,19 @@ class UserSerivece {
   }
   // *** добавить адрес
   async addAddress(userId, addressData) {
-    return await USER.findByIdAndUpdate(
-      userId,
-      { $push: { addresses: addressData } },
-      { new: true },
-    );
+    const user = await USER.findById(userId);
+
+    if (!user) throw new Error('user not found');
+
+    if (addressData.isDefault) {
+      // сбросить все старые дефолты
+      user.addresses.forEach((addr) => (addr.isDefault = false));
+    }
+
+    user.addresses.push(addressData);
+
+    await user.save();
+    return user;
   }
   // *** обновить адрес
   async updateAddress(userId, addressId, updateData) {

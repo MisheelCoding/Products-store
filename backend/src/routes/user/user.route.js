@@ -12,9 +12,10 @@ router.post('/favorites', userController.addToFavorites);
 router.delete('/favorites', userController.removeFromFavorites);
 
 // ***addreses
-router.get('/address', userController.getAddresses);
-router.post('/address', userController.addAddress);
-router.delete('/address', userController.deleteAddress);
+router.get('/addresses', userController.getAddresses);
+router.post('/addresses', userController.addAddress);
+router.put('/addresses/:addressId', userController.updateAddress);
+router.delete('/addresses/:addressId', userController.deleteAddress);
 
 // *** order
 router.post('/orders', orderController.createOrder);
