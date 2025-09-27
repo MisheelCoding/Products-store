@@ -29,8 +29,8 @@
       </div>
     </div>
 
-    <div v-else class="editing-field__display py-2">
-      <div class="flex gap-3" v-if="props.data !== null">
+    <div v-else class="editing-field__display">
+      <div class="flex gap-3 justify-between" v-if="props.data !== null">
         <span>{{ props.data }}</span>
         <div class="editing-field__btns flex gap-2">
           <button class="btn editing-field--delete" title="Удалить" @click="emit('delete')">
