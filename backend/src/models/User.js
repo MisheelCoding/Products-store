@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     roles: { type: [String], default: ['USER'] }, //COURIER , ADMIN, SUPERADMIN
     favorite: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-    phone: { type: String },
+    phone: { type: String, default: '' },
     verified: { type: Boolean, default: false },
     isBanned: { type: Boolean, default: false },
     addresses: [addressSchema],

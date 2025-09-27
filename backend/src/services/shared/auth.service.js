@@ -36,7 +36,7 @@ class AuthService {
     const user = await USER.findOne(query);
     if (!user) throw INVALID;
 
-    const ok = bcrypt.compare(pwd, user.password);
+    const ok = await bcrypt.compare(pwd, user.password);
     if (!ok) throw INVALID;
 
     const tokens = genereateToken(buildTokenPayload(user));
@@ -119,6 +119,8 @@ class AuthService {
   async logout(refreshToken) {
     return await deleteToken(refreshToken);
   }
+  // *** forget pass
+
   async forgotPassword(email) {
     const user = await USER.findOne({ email });
 

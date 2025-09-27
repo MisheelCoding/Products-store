@@ -24,7 +24,7 @@
         </div>
         <div class="profile__col border p-5 border-gray-500 rounded-2xl w-full">
           <div for="profile__addresses">
-            <h2 class="profile__addresses-title">Адресса</h2>
+            <h2 class="profile__addresses-title mb-5">Адресса</h2>
             <ProfileAdresses></ProfileAdresses>
           </div>
         </div>
