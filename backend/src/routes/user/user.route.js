@@ -17,6 +17,10 @@ router.post('/addresses', userController.addAddress);
 router.put('/addresses/:addressId', userController.updateAddress);
 router.delete('/addresses/:addressId', userController.deleteAddress);
 
+// ***number
+router.put('/phone', userController.saveNumber);
+router.delete('/phone', userController.deleteNumber);
+
 // *** order
 router.post('/orders', orderController.createOrder);
 router.get('/orders', orderController.getOrders);

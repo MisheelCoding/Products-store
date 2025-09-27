@@ -91,6 +91,23 @@ class UserSerivece {
     if (!user) throw new Error('user not found');
     return user.addresses || [];
   }
+
+  // *** saveNumber
+  async saveNumber(userId, data) {
+    const user = await USER.findById(userId);
+    if (!user) throw new Error('user not found');
+    user.phone = data.phone ?? data;
+    user.save();
+    return user;
+  }
+  // ***deleteNumber
+  async deleteNumber(userId) {
+    const user = await USER.findById(userId);
+    if (!user) throw new Error('user not found');
+    user.phone = null;
+    user.save();
+    return user;
+  }
 }
 
 export const userService = new UserSerivece();

@@ -18,7 +18,7 @@ export const useProfileStore = defineStore('profile', () => {
       addresses: data,
     })
   }
-  // *** Создать новый
+  // *** Создать новый Адресс
   async function createAddress(data: Address) {
     const tempId = `temp-${Date.now()}`
     const optimisticAddress: Address = { ...data, _id: tempId }
@@ -101,6 +101,45 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
+  // *** сохранить номер
+
+  async function saveNumber(data: string) {
+    const oldNumber = data
+    auth.setUser({
+      ...auth.user!,
+      phone: data,
+    })
+    try {
+      await api.put('api/user/phone', { phone: data }, { withCredentials: true })
+    } catch (e) {
+      auth.setUser({
+        ...auth.user!,
+        phone: oldNumber,
+      })
+      console.log('Ошибка сохраниний номера')
+      throw e
+    }
+  }
+
+  // *** удалить номер
+  async function deleteNumber() {
+    const oldNumber = auth.user?.phone
+    auth.setUser({
+      ...auth.user!,
+      phone: null,
+    })
+    try {
+      await api.delete('api/user/phone', { withCredentials: true })
+    } catch (e) {
+      auth.setUser({
+        ...auth.user!,
+        phone: oldNumber ?? null,
+      })
+      console.log('Ошибка удалений номера')
+      throw e
+    }
+  }
+
   return {
     // *** states
     profile,
@@ -111,5 +150,8 @@ export const useProfileStore = defineStore('profile', () => {
     updateAddress,
     deleteAddress,
     createAddress,
+
+    saveNumber,
+    deleteNumber,
   }
 })
