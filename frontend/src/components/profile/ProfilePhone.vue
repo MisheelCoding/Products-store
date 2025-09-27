@@ -1,6 +1,6 @@
 <template>
   <div class="profile-phone">
-    <h2 class="profile-phone__title">Телефон</h2>
+    <h2 class="profile-phone__title my-4">Телефон</h2>
     <UiEditField
       :data="auth.user?.phone ? auth.user?.phone : null"
       :placeholder="'Введите ваш номер'"

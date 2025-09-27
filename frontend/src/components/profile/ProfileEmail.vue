@@ -1,6 +1,6 @@
 <template>
   <div class="profile__email-wrapper">
-    <h2>Email</h2>
+    <h2 class="my-4">Email</h2>
     <div class="flex items-center gap-2">
       <p class="profile__email">
         {{ auth.user?.email }}

@@ -23,9 +23,10 @@
           </div>
         </div>
         <div class="profile__col border p-5 border-gray-500 rounded-2xl w-full flex flex-col gap-5">
-          <ProfileEmail />
           <ProfileAdresses></ProfileAdresses>
+          <ProfileEmail />
           <ProfilePhone />
+          <ProfileDateInfo />
         </div>
       </div>
     </div>
@@ -47,6 +48,7 @@
 <script setup lang="ts">
 import avatarImg from '@/assets/img/optimized/avatar-exapmle.webp'
 import ProfileAdresses from '@/components/profile/ProfileAddresses.vue'
+import ProfileDateInfo from '@/components/profile/ProfileDateInfo.vue'
 import ProfileEmail from '@/components/profile/ProfileEmail.vue'
 import ProfilePhone from '@/components/profile/ProfilePhone.vue'
 
