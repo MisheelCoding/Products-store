@@ -1,5 +1,5 @@
 <template>
-  <form class="address__edit-form" @submit.prevent="save">
+  <div class="address__edit-form">
     <div class="address__edit--item flex gap-3 flex-wrap">
       <input class="inp" type="text" placeholder="Название" v-model="model.label" />
       <input class="inp" type="text" placeholder="Страна" v-model="model.country" />
@@ -17,7 +17,8 @@
         >Отменить</UiButton
       >
       <UiButton
-        type="submit"
+        type="button"
+        @click="save"
         size="md"
         variant="dark"
         style-btn="rounded-2xl"
@@ -25,7 +26,7 @@
         >Сохранить</UiButton
       >
     </div>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -20,7 +20,7 @@ export interface User {
   verified: boolean
   isBanned: boolean
   region: string
-  phone: string
+  phone: string | null
   addresses: Address[] // или отдельный тип если структура сложнее
   createdAt: string // ISO-дата
   updatedAt: string // ISO-дата

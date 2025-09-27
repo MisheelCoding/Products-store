@@ -1,5 +1,6 @@
 <template>
   <div class="profile__addresses">
+    <h2 class="profile__addresses-title mb-5">Адресса</h2>
     <div class="address mb-3" v-for="a in profile.addresses" :key="a._id">
       <!-- ?? Если режим редактирование  -->
       <Profile-Addresses-Form

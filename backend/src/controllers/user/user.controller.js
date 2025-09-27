@@ -115,7 +115,26 @@ class UserController {
       next();
     }
   }
-  // ***
+  // *** saveNumber
+  async saveNumber(req, res, next) {
+    try {
+      const user = await userService.saveNumber(req.user.id, req.body);
+      res.json(user);
+    } catch (e) {
+      res.status(400).json({ message: e });
+      next();
+    }
+  }
+  // ***deleteNumber
+  async deleteNumber(req, res, next) {
+    try {
+      const user = await userService.deleteNumber(req.user.id);
+      res.json(user);
+    } catch (e) {
+      res.status(400).json({ message: e });
+      next();
+    }
+  }
 }
 
 export const userController = new UserController();
