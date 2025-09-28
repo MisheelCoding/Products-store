@@ -11,17 +11,17 @@ export interface Address {
 }
 
 export interface User {
-  id: string
+  readonly id: string
   username: string
   email: string
-  // пароль лучше не хранить на фронте, но если backend всё равно шлёт — можешь исключить
+
   roles: string[]
-  favorite: string[] // если храните IDшники продуктов/магазинов
+  favorite: string[] //id храниться продуктов
   verified: boolean
   isBanned: boolean
   region: string
   phone: string | null
-  addresses: Address[] // или отдельный тип если структура сложнее
+  addresses: Address[] //
   createdAt: string // ISO-дата
   updatedAt: string // ISO-дата
   __v: number

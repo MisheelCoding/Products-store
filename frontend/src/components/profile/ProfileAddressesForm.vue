@@ -44,7 +44,7 @@ const emit = defineEmits<{
   (e: 'cancel'): void
 }>()
 
-const model: Address = reactive({ ...props.address })
+const model = reactive<Address>({ ...props.address })
 
 watch(
   () => props.address,

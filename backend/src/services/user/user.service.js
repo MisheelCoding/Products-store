@@ -87,7 +87,7 @@ class UserSerivece {
   }
   // ***получить адресса
   async getAddresses(userId) {
-    const user = await USER.findById(userId).lean();
+    const user = await USER.findById(userId);
     if (!user) throw new Error('user not found');
     return user.addresses || [];
   }

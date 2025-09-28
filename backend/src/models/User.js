@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema(
 userSchema.plugin(encrypt, {
   encryptionKey: process.env.ENCRYPTION_KEY,
   signingKey: process.env.SIGNING_KEY,
-  encryptedFields: ['email', 'phone', 'addresses.phone'],
+  encryptedFields: ['email', 'phone'],
 });
 
 export const USER = mongoose.model('User', userSchema);
