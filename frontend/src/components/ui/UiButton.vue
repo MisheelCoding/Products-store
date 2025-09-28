@@ -7,6 +7,7 @@
     :class="[variantClass, sizeClass, styleClass]"
     :type="to ? undefined : type"
     :aria-label="ariaLabel"
+    :disabled="disabled"
   >
     <slot />
   </component>
@@ -23,12 +24,14 @@ interface Props {
   variant?: 'dark' | 'white' | 'outline'
   size?: 'auto' | 'md' | 'lg'
   styleBtn?: 'rounded' | 'rounded-2xl' | 'rounded-full' | 'notRounded'
+  disabled?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   type: 'button',
   variant: 'outline',
   size: 'auto',
   styleBtn: 'rounded-full',
+  disabled: false,
 })
 
 const variantClass = computed(() => {

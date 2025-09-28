@@ -6,6 +6,9 @@ import express from 'express';
 const router = express.Router();
 router.use(authMiddleware);
 
+// *** get actual Profileinfo
+router.get('/me', userController.getProfile);
+
 // *** favorite routes
 router.get('/favorites', userController.getFavorites);
 router.post('/favorites', userController.addToFavorites);

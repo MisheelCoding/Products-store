@@ -11,7 +11,7 @@
       <!--  -->
       <div class="profile__body grid w-full gap-5">
         <div
-          class="profile__col border p-5 border-gray-500 rounded-2xl flex flex-col justify-center items-center"
+          class="profile__col border p-5 border-gray-500 rounded-2xl flex flex-col gap-5 justify-center items-center"
         >
           <h2 class="profile__username">{{ user?.username }}</h2>
           <div class="avatar overflow-hidden relative rounded-2xl">
