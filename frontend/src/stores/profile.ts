@@ -1,6 +1,6 @@
 import type { Address } from '@/types/auth'
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useAuthStore } from './auth'
 import api from '@/scripts/api'
 
@@ -9,6 +9,8 @@ export const useProfileStore = defineStore('profile', () => {
 
   const profile = computed(() => auth.user)
   const addresses = computed(() => auth.user?.addresses ?? [])
+
+  const isAddingAddress = ref(false)
 
   // ***Получить аддресса
   async function getAddresses() {
@@ -19,50 +21,57 @@ export const useProfileStore = defineStore('profile', () => {
     })
   }
   // *** Создать новый Адресс
+  // async function createAddress(data: Address) {
+  //   const tempId = `temp-${Date.now()}`
+  //   const optimisticAddress: Address = { ...data, _id: tempId }
+
+  //   auth.setUser({
+  //     ...auth.user!,
+  //     addresses: [...addresses.value, optimisticAddress],
+  //   })
+  //   console.log(`до запроса`, addresses.value)
+
+  //   try {
+  //     const { data: newAddress } = await api.post<Address>('api/user/addresses', data, {
+  //       withCredentials: true,
+  //     })
+
+  //     auth.setUser({
+  //       ...auth.user!,
+  //       addresses: [...addresses.value.map((addr) => (addr._id === tempId ? newAddress : addr))],
+  //     })
+  //     // console.log(`после запроса- ${addresses.value}`)
+  //     console.log(`после запроса`, addresses.value)
+
+  //     return newAddress
+  //   } catch (e) {
+  //     auth.setUser({
+  //       ...auth.user!,
+  //       addresses: (addresses.value ?? []).filter((addr) => addr._id !== tempId),
+  //     })
+  //     console.error('Ошибка при создании адреса:', e)
+  //     throw e
+  //   }
+  // }
   async function createAddress(data: Address) {
-    const tempId = `temp-${Date.now()}`
-    const optimisticAddress: Address = { ...data, _id: tempId }
-    auth.setUser({
-      ...auth.user!,
-      addresses: [...(auth.user?.addresses ?? []), optimisticAddress],
-    })
+    isAddingAddress.value = true
     try {
       const { data: newAddress } = await api.post('api/user/addresses', data, {
         withCredentials: true,
       })
       auth.setUser({
         ...auth.user!,
-        addresses: [...(auth.user?.addresses ?? [])].map((addr) =>
-          addr._id === tempId ? newAddress : addr,
-        ),
+        addresses: [...(auth.user?.addresses ?? []), newAddress],
       })
-
+      await getAddresses()
       return newAddress
     } catch (e) {
-      auth.setUser({
-        ...auth.user!,
-        addresses: (auth.user?.addresses ?? []).filter((addr) => addr._id !== tempId),
-      })
       console.error('Ошибка при создании адреса:', e)
       throw e
+    } finally {
+      isAddingAddress.value = false
     }
   }
-  // async function createAddress(data: Address) {
-  //   try {
-  //     const { data: newAddress } = await api.post('api/user/addresses', data, {
-  //       withCredentials: true,
-  //     })
-  //     auth.setUser({
-  //       ...auth.user!,
-  //       addresses: [...(auth.user?.addresses ?? []), newAddress],
-  //     })
-  //     await getAddresses()
-  //     return newAddress
-  //   } catch (e) {
-  //     console.error('Ошибка при создании адреса:', e)
-  //     throw e
-  //   }
-  // }
 
   // ***Обновить аддресс
 
@@ -83,7 +92,7 @@ export const useProfileStore = defineStore('profile', () => {
 
   // *** Удалить
   async function deleteAddress(id: string | undefined) {
-    const oldAddresses = { ...addresses }
+    const oldAddresses = { ...addresses.value }
 
     auth.setUser({
       ...auth.user!,
@@ -94,7 +103,7 @@ export const useProfileStore = defineStore('profile', () => {
     } catch (e) {
       auth.setUser({
         ...auth.user!,
-        addresses: oldAddresses.value,
+        addresses: oldAddresses,
       })
       console.log('Ошибка при Удалении адреса:', e)
       throw e
@@ -144,6 +153,7 @@ export const useProfileStore = defineStore('profile', () => {
     // *** states
     profile,
     addresses,
+    isAddingAddress,
 
     // **methods
     getAddresses,

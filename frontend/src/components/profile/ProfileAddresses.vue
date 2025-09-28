@@ -8,12 +8,12 @@
         @save="saveAddress(a._id, $event)"
         @cancel="cancelAddress"
         mode="edit"
-        v-if="editingId === a._id || (editingId === 'new' && a._id === '')"
+        v-if="editingId === a._id"
       >
       </Profile-Addresses-Form>
 
-      <!-- ??  режим обычный инлайн  -->
-      <template v-else>
+      <!-- ??  режим обычный инлайн простомтра -->
+      <template v-else-if="editingId !== 'new' && profile.addresses.length > 0">
         <div class="flex justify-between">
           <div class="address__info flex flex-wrap">
             <span> {{ a.country }},</span>
@@ -52,13 +52,20 @@
       </template>
     </div>
     <ProfileAddressesForm
-      v-if="editingId === 'new'"
+      v-if="editingId === 'new' && !isSavingAddress"
       mode="new"
       @save="saveAddress('new', $event)"
       @cancel="cancelAddress"
       :address="localAddress"
+      :key="editingId"
     >
     </ProfileAddressesForm>
+    <!--?? при добавлений показываем loader что загруджаем -->
+    <div v-if="profile.isAddingAddress">Добавляем новый адрес...</div>
+    <!--?? Если нету адресов -->
+    <div v-if="profile.addresses.length === 0">У вас нету аддрессов добавьте</div>
+    <!--?? Добавить адресс -->
+
     <button class="btn mt-3 text-green-700" title="Новый адресс" type="button" @click="addAddress">
       + Новый адрес
     </button>
@@ -74,6 +81,8 @@ import { onMounted, reactive, ref } from 'vue'
 import ProfileAddressesForm from '@/components/profile/ProfileAddressesForm.vue'
 
 const profile = useProfileStore()
+
+const isSavingAddress = ref(false)
 
 // const props = withDefaults(
 //   defineProps<{
@@ -96,14 +105,7 @@ function emptyAddress(): Omit<Address, '_id'> {
 
 const editingId = ref<string | null>(null)
 
-const localAddress: Address = reactive({
-  label: '',
-  addressLine: '',
-  city: '',
-  country: '',
-  phone: '',
-  isDefault: false,
-})
+const localAddress: Address = reactive(emptyAddress())
 
 function editAddress(id: string) {
   const addr = profile.addresses.find((a) => a._id === id)
@@ -123,6 +125,7 @@ function addAddress() {
 }
 
 async function saveAddress(id: string, data: Address) {
+  isSavingAddress.value = true
   try {
     if (id === 'new') {
       const { _id, ...cleandata } = data
@@ -134,11 +137,14 @@ async function saveAddress(id: string, data: Address) {
   } catch (e) {
     console.log('Ошибка при сохранении адреса')
     throw e
+  } finally {
+    isSavingAddress.value = false
   }
 }
 
 onMounted(async () => {
   await profile.getAddresses()
+  console.log(profile.addresses)
 })
 </script>
 
