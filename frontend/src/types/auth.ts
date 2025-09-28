@@ -24,7 +24,7 @@ export interface User {
   addresses: Address[] //
   createdAt: string // ISO-дата
   updatedAt: string // ISO-дата
-  __v: number
+  __v?: number
 }
 
 export interface AuthResponse {

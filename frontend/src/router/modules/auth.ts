@@ -13,4 +13,9 @@ export const authRoutes: RouteRecordRaw[] = [
     name: 'register',
     meta: { title: 'register' },
   },
+  {
+    path: '/auth/verify-email',
+    component: () => import('@/pages/auth/AuthVerifyEmail.vue'),
+    name: 'verify-email',
+  },
 ]

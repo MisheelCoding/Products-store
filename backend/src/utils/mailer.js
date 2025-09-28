@@ -5,7 +5,6 @@ dotenv.config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Настраиваем from через .env если домен ещё не подтверждён fallback на onboarding
 const FROM_EMAIL = process.env.MAIL_FROM || 'onboarding@resend.dev';
 const FROM_NAME = process.env.MAIL_FROM_NAME || 'My App';
 
