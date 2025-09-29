@@ -6,9 +6,11 @@ import api from '@/scripts/api'
 
 export const useProfileStore = defineStore('profile', () => {
   const auth = useAuthStore()
-
   const profile = computed(() => auth.user)
   const addresses = computed(() => auth.user?.addresses ?? [])
+
+  let intervalId: ReturnType<typeof setInterval> | null = null
+  const timer = ref(0)
 
   const isAddingAddress = ref(false)
 
@@ -149,11 +151,28 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
+  // ***
+  function startTimer(seconds: number) {
+    timer.value = seconds
+    if (intervalId) clearInterval(intervalId)
+    intervalId = setInterval(() => {
+      if (timer.value > 0) {
+        timer.value--
+      } else {
+        clearInterval(intervalId!)
+        intervalId = null
+      }
+    }, 1000)
+  }
+
   return {
     // *** states
     profile,
     addresses,
     isAddingAddress,
+
+    timer,
+    intervalId,
 
     // **methods
     getAddresses,
@@ -163,5 +182,7 @@ export const useProfileStore = defineStore('profile', () => {
 
     saveNumber,
     deleteNumber,
+
+    startTimer,
   }
 })

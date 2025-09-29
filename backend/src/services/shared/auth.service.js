@@ -12,18 +12,6 @@ import { hashEmail } from '#utils/hashEmail.js';
 //
 class AuthService {
   // *** login
-
-  // async login(username, password) {
-  //   const user = await USER.findOne({ username });
-  //   if (!user) throw new Error(`Пользователь с ${username} таким именем не существет`);
-
-  //   const isValid = await bcrypt.compare(password, user.password);
-  //   if (!isValid) throw new Error(`Не верный пароль`);
-
-  //   const tokens = genereateToken(buildTokenPayload(user));
-  //   await saveToken(user._id, tokens.refreshToken);
-  //   return { ...tokens, user: toClientUser(user) };
-  // }
   async login(identifier, password) {
     const id = (identifier || '').trim();
     const pwd = password || '';
@@ -32,7 +20,7 @@ class AuthService {
 
     const isEmail = id.includes('@', 0);
 
-    const query = isEmail ? { email: id } : { username: id };
+    const query = isEmail ? { emailHash: hashEmail(id) } : { username: id };
 
     const user = await USER.findOne(query);
     if (!user) throw INVALID;
@@ -75,14 +63,21 @@ class AuthService {
   // }
   // *** Register
   async register(username, email, password) {
-    const candidate = await USER.findOne({ $or: [{ email }, { username }] });
+    const emailHash = hashEmail(email);
+    const candidate = await USER.findOne({ $or: [{ emailHash }, { username }] });
     if (candidate) {
-      if (candidate.email === email) throw new Error(`Email уже используеться`);
+      if (candidate.emailHash === emailHash) throw new Error(`Email уже используеться`);
       if (candidate.username === username) throw new Error(`username уже используеться`);
     }
     const hash = await bcrypt.hash(password, 10);
-    const user = await USER.create({ username, email, password: hash });
-
+    console.log('data', { email, username, password });
+    const user = await USER.create({
+      username,
+      email,
+      password: hash,
+      emailHash: emailHash,
+    });
+    // user.emailHash = hashEmail(user.email);
     const tokens = genereateToken(buildTokenPayload(user));
     await saveToken(user._id, tokens.refreshToken);
     return { ...tokens, user: toClientUser(user) };
@@ -171,6 +166,7 @@ class AuthService {
   async resendVerificationCode(email) {
     const user = await USER.findOne({ emailHash: hashEmail(email) });
     if (!user) throw new Error('user not found');
+    if (user.verified) throw new Error('почта уже подверждена');
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
     const verifyLink = `${process.env.DEV_CLIENT_URL}/auth/verify-email?token=${token}`;

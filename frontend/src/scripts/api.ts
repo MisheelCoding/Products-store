@@ -13,7 +13,7 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 }
 
 // один хелпер, чтобы везде получать человекочитаемое сообщение
-function getErrorMessage(err: unknown): string {
+export function getErrorMessage(err: unknown): string {
   if (err instanceof CanceledError) return 'Запрос отменён'
   if (isAxiosError<{ message?: string; errors?: Record<string, string[]> }>(err)) {
     const res = err.response
@@ -83,11 +83,12 @@ api.interceptors.response.use(
     //  тип шире (unknown)
     const store = useAuthStore()
 
-    // сразу положим удобное сообщение в стор
-    store.error = getErrorMessage(error) //
-
-    // дальше — только если это axios-ошибка
-    if (!isAxiosError(error)) {
+    if (isAxiosError(error)) {
+      // тут TS уже знает что error: AxiosError
+      store.error = getErrorMessage(error)
+    } else {
+      // это не axios-ошибка
+      store.error = error instanceof Error ? error.message : 'Неизвестная ошибка'
       return Promise.reject(error)
     }
 
