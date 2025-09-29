@@ -22,7 +22,7 @@
       <UiButton
         v-if="!profile?.verified"
         variant="dark"
-        :disabled="timer > 0"
+        :disabled="profileStore.timer > 0"
         class="profile-email__button disabled:opacity-60 disabled:cursor-not-allowed self-start"
         @click="resendEmailVerifacation"
       >
@@ -40,15 +40,12 @@ import UiButton from '@/components/ui/UiButton.vue'
 import api from '@/scripts/api'
 import { useProfileStore } from '@/stores/profile'
 import { ref } from 'vue'
-
-const { profile } = useProfileStore()
+const profileStore = useProfileStore()
+const { profile } = profileStore
 const message = ref('')
-const timer = ref(0)
-
-let intervalId: ReturnType<typeof setInterval> | null = null
 
 const resendEmailVerifacation = async () => {
-  startTimer(60)
+  profileStore.startTimer(60)
   message.value = 'Письмо отправлено! Проверьте почту 📧'
   try {
     await api.post(
@@ -60,19 +57,6 @@ const resendEmailVerifacation = async () => {
     message.value = 'ошибка попробуйте еще раз'
     throw e
   }
-}
-
-function startTimer(seconds: number) {
-  timer.value = seconds
-  if (intervalId) clearInterval(intervalId)
-  intervalId = setInterval(() => {
-    if (timer.value > 0) {
-      timer.value--
-    } else {
-      clearInterval(intervalId!)
-      intervalId = null
-    }
-  }, 1000)
 }
 </script>
 

@@ -3,13 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import api from '@/scripts/api'
+import api, { getErrorMessage } from '@/scripts/api'
 import { useAuthStore } from '@/stores/auth'
 import type { User } from '@/types/auth'
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 const auth = useAuthStore()
 const route = useRoute()
+const router = useRouter()
 const message = ref('Подверждаем ваш Email...')
 
 onMounted(async () => {
@@ -25,12 +26,12 @@ onMounted(async () => {
       message.value = res.data.message || 'Email успешно подтвержден!'
       const { data } = await api.get<User>('api/user/me', { withCredentials: true })
       auth.setUser(data)
+      router.push({ name: 'profile' })
     } else {
       message.value = res.data.message || ' Ошибка при подтверждении'
     }
   } catch (e) {
-    message.value = 'Ошибка соединения с сервером'
-    throw e
+    message.value = getErrorMessage(e) || 'Ошибка соединения с сервером'
   }
 })
 </script>
