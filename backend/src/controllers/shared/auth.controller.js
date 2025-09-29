@@ -82,34 +82,17 @@ class AuthController {
 
   async verifyEmail(req, res, next) {
     try {
-      const { token } = req.query; //  было refreshtoken
+      const { token } = req.query;
       const data = await authServiece.verifyEmail(token);
       res.json(data);
     } catch (e) {
       next(e);
     }
   }
-  // async changePassword(req, res, next) {
-  //   try {
-  //     const { refreshtoken } = req.query;
-  //     const { newPassword } = req.body;
-  //     const data = await authServiece.changePassword(refreshtoken, newPassword);
-  //     res.json(data);
-  //   } catch (e) {
-  //     next(e);
-  //   }
-  // }
-  // async verifyEmail(req, res, next) {
-  //   try {
-  //     const data = await authServiece.verifyEmail(req.query.refreshtoken);
-  //     res.json(data);
-  //   } catch (e) {
-  //     next(e);
-  //   }
-  // }
 
   // ***
   async resendVerificationCode(req, res, next) {
+    console.log('req.body:', req.body);
     try {
       const data = await authServiece.resendVerificationCode(req.body.email);
       res.json(data);

@@ -1,4 +1,6 @@
+import { hashEmail } from '#utils/hashEmail.js';
 import mongoose from 'mongoose';
+import encrypt from 'mongoose-encryption';
 
 const savedCardSchema = new mongoose.Schema({
   paymentMethodId: { type: String, required: true }, // id от ЮKassa
@@ -24,23 +26,43 @@ const addressSchema = new mongoose.Schema(
   { _id: true },
 );
 
+addressSchema.plugin(encrypt, {
+  encryptionKey: process.env.ENCRYPTION_KEY,
+  signingKey: process.env.SIGNING_KEY,
+  encryptedFields: ['phone'],
+});
+
 const userSchema = new mongoose.Schema(
   {
     username: { type: String, unique: true, required: true },
-    email: { type: String, unique: true, required: true },
+    email: { type: String, required: true }, // unique: false
+    emailHash: { type: String, unique: true, index: true },
     password: { type: String, required: true },
-    roles: { type: [String], default: ['USER'] }, //COURIER , ADMIN, SUPERADMIN
+    roles: { type: [String], default: ['USER'] }, //COURIER , ADMIN, SUPERADMIN потом можно добавить MANAGER расшиорить
     favorite: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-    phone: { type: String },
+    phone: { type: String, default: null },
     verified: { type: Boolean, default: false },
     isBanned: { type: Boolean, default: false },
     addresses: [addressSchema],
-    region: { type: String },
+    region: { type: String, default: null },
     store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
     savedCards: [savedCardSchema],
   },
   { timestamps: true },
 );
 
+userSchema.pre('save', async function (next) {
+  if (this.isModified('email')) {
+    this.emailHash = hashEmail(this.email);
+  }
+  next();
+});
+
+userSchema.plugin(encrypt, {
+  encryptionKey: process.env.ENCRYPTION_KEY,
+  signingKey: process.env.SIGNING_KEY,
+  encryptedFields: ['phone', 'email'],
+  // encryptedFields: ['phone'],
+});
+
 export const USER = mongoose.model('User', userSchema);
-// export { USER };

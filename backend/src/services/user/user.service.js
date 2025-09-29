@@ -54,11 +54,19 @@ class UserSerivece {
   }
   // *** добавить адрес
   async addAddress(userId, addressData) {
-    return await USER.findByIdAndUpdate(
-      userId,
-      { $push: { addresses: addressData } },
-      { new: true },
-    );
+    const user = await USER.findById(userId);
+
+    if (!user) throw new Error('user not found');
+
+    if (addressData.isDefault) {
+      // сбросить все старые дефолты
+      user.addresses.forEach((addr) => (addr.isDefault = false));
+    }
+
+    user.addresses.push(addressData);
+
+    await user.save();
+    return user;
   }
   // *** обновить адрес
   async updateAddress(userId, addressId, updateData) {
@@ -79,9 +87,26 @@ class UserSerivece {
   }
   // ***получить адресса
   async getAddresses(userId) {
-    const user = await USER.findById(userId).lean();
+    const user = await USER.findById(userId);
     if (!user) throw new Error('user not found');
     return user.addresses || [];
+  }
+
+  // *** saveNumber
+  async saveNumber(userId, data) {
+    const user = await USER.findById(userId);
+    if (!user) throw new Error('user not found');
+    user.phone = data.phone ?? data;
+    user.save();
+    return user;
+  }
+  // ***deleteNumber
+  async deleteNumber(userId) {
+    const user = await USER.findById(userId);
+    if (!user) throw new Error('user not found');
+    user.phone = null;
+    user.save();
+    return user;
   }
 }
 

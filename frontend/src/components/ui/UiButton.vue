@@ -3,10 +3,11 @@
   <component
     :is="to ? 'router-link' : 'button'"
     :to="to"
-    class="ui-button px-5 py-3 rounded-full transition cursor-pointer overflow-hidden relative"
-    :class="[variantClass, sizeClass]"
+    class="ui-button px-5 py-1 transition cursor-pointer overflow-hidden relative flex items-center justify-center"
+    :class="[variantClass, sizeClass, styleClass]"
     :type="to ? undefined : type"
     :aria-label="ariaLabel"
+    :disabled="disabled"
   >
     <slot />
   </component>
@@ -22,11 +23,15 @@ interface Props {
   ariaLabel?: string
   variant?: 'dark' | 'white' | 'outline'
   size?: 'auto' | 'md' | 'lg'
+  styleBtn?: 'rounded' | 'rounded-2xl' | 'rounded-full' | 'notRounded'
+  disabled?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   type: 'button',
   variant: 'outline',
   size: 'auto',
+  styleBtn: 'rounded-full',
+  disabled: false,
 })
 
 const variantClass = computed(() => {
@@ -43,11 +48,24 @@ const variantClass = computed(() => {
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'md':
-      return 'max-w-[12.5rem]'
+      return '!max-w-[12.5rem] h-[2.50rem]'
     case 'lg':
-      return 'max-w-[15.625rem]'
+      return '!max-w-[15.625rem] h-[3rem]'
     default:
-      return 'w-auto'
+      return 'w-auto h-[3rem]'
+  }
+})
+
+const styleClass = computed(() => {
+  switch (props.styleBtn) {
+    case 'rounded':
+      return 'rounded '
+    case 'rounded-2xl':
+      return 'rounded-2xl'
+    case 'rounded-full':
+      return 'rounded-full'
+    default:
+      return ''
   }
 })
 </script>

@@ -6,15 +6,23 @@ import express from 'express';
 const router = express.Router();
 router.use(authMiddleware);
 
+// *** get actual Profileinfo
+router.get('/me', userController.getProfile);
+
 // *** favorite routes
 router.get('/favorites', userController.getFavorites);
 router.post('/favorites', userController.addToFavorites);
 router.delete('/favorites', userController.removeFromFavorites);
 
 // ***addreses
-router.get('/address', userController.getAddresses);
-router.post('/address', userController.addAddress);
-router.delete('/address', userController.deleteAddress);
+router.get('/addresses', userController.getAddresses);
+router.post('/addresses', userController.addAddress);
+router.put('/addresses/:addressId', userController.updateAddress);
+router.delete('/addresses/:addressId', userController.deleteAddress);
+
+// ***number
+router.put('/phone', userController.saveNumber);
+router.delete('/phone', userController.deleteNumber);
 
 // *** order
 router.post('/orders', orderController.createOrder);

@@ -6,22 +6,12 @@ import { genereateToken, saveToken, deleteToken, findToken } from '#utils/token.
 import { TOKEN } from '#models/Token.js';
 import mongoose from 'mongoose';
 import { buildTokenPayload, toClientUser } from '#utils/mapUser.js';
+import { hashEmail } from '#utils/hashEmail.js';
 
 // *** HELPER for duble code
 //
 class AuthService {
   // *** login
-  // async login(username, password) {
-  //   const user = await USER.findOne({ username });
-  //   if (!user) throw new Error(`Пользователь с ${username} таким именем не существет`);
-
-  //   const isValid = await bcrypt.compare(password, user.password);
-  //   if (!isValid) throw new Error(`Не верный пароль`);
-
-  //   const tokens = genereateToken(buildTokenPayload(user));
-  //   await saveToken(user._id, tokens.refreshToken);
-  //   return { ...tokens, user: toClientUser(user) };
-  // }
   async login(identifier, password) {
     const id = (identifier || '').trim();
     const pwd = password || '';
@@ -30,12 +20,12 @@ class AuthService {
 
     const isEmail = id.includes('@', 0);
 
-    const query = isEmail ? { email: id } : { username: id };
+    const query = isEmail ? { emailHash: hashEmail(id) } : { username: id };
 
     const user = await USER.findOne(query);
     if (!user) throw INVALID;
 
-    const ok = bcrypt.compare(pwd, user.password);
+    const ok = await bcrypt.compare(pwd, user.password);
     if (!ok) throw INVALID;
 
     const tokens = genereateToken(buildTokenPayload(user));
@@ -73,14 +63,21 @@ class AuthService {
   // }
   // *** Register
   async register(username, email, password) {
-    const candidate = await USER.findOne({ $or: [{ email }, { username }] });
+    const emailHash = hashEmail(email);
+    const candidate = await USER.findOne({ $or: [{ emailHash }, { username }] });
     if (candidate) {
-      if (candidate.email === email) throw new Error(`Email уже используеться`);
+      if (candidate.emailHash === emailHash) throw new Error(`Email уже используеться`);
       if (candidate.username === username) throw new Error(`username уже используеться`);
     }
     const hash = await bcrypt.hash(password, 10);
-    const user = await USER.create({ username, email, password: hash });
-
+    console.log('data', { email, username, password });
+    const user = await USER.create({
+      username,
+      email,
+      password: hash,
+      emailHash: emailHash,
+    });
+    // user.emailHash = hashEmail(user.email);
     const tokens = genereateToken(buildTokenPayload(user));
     await saveToken(user._id, tokens.refreshToken);
     return { ...tokens, user: toClientUser(user) };
@@ -118,6 +115,8 @@ class AuthService {
   async logout(refreshToken) {
     return await deleteToken(refreshToken);
   }
+  // *** forget pass
+
   async forgotPassword(email) {
     const user = await USER.findOne({ email });
 
@@ -165,71 +164,21 @@ class AuthService {
 
   // *** resend verify email (единный CLIENT_URL)
   async resendVerificationCode(email) {
-    const user = await USER.findOne({ email });
+    const user = await USER.findOne({ emailHash: hashEmail(email) });
     if (!user) throw new Error('user not found');
+    if (user.verified) throw new Error('почта уже подверждена');
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-    const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${token}`; // <-- CLIENT_URL
+    const verifyLink = `${process.env.DEV_CLIENT_URL}/auth/verify-email?token=${token}`;
 
     await sendMail({
-      to: email,
-      subject: 'Подтверждение почты',
-      html: `<p>Нажмите <a href="${verifyLink}">здесь</a>, чтобы подтвердить</p>`,
+      to: user.email,
+      subject: 'Подтверждение почты на сайте Misheel Store',
+      html: `<p>Нажмите <a href="${verifyLink}">здесь</a>, чтобы подтвердить ваш Email на сайте${process.env.MAIL_FROM_NAME}</p>`,
     });
 
     return { message: 'Письмо отправлено повторно' };
   }
-
-  // // *** forget password
-  // async forgotPassword(email) {
-  //   const user = await USER.findOne({ email });
-  //   if (!user) throw new Error(`Пользователь не найден`);
-
-  //   const token = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-  //   const resetLink = `${process.env.DEV_CLIENT_URL}/reset-password?token=${token}`;
-
-  //   await sendMail({
-  //     to: email,
-  //     subject: 'Resest your password',
-  //     html: `<p>Click <a href="${resetLink}">here</a> to reset your password</p>`,
-  //   });
-
-  //   return { message: 'reset email sent' };
-  // }
-  // async changePassword(token, newPassword) {
-  //   const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-  //   const user = await USER.findById(payload.id);
-  //   if (!user) throw new Error('user not found');
-
-  //   user.password = await bcrypt.hash(newPassword, 10);
-  //   await user.save();
-  //   return { message: 'Пароль успешно изменен' };
-  // }
-  // // *** verify email
-  // async verifyEmail(token) {
-  //   const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-  //   const user = await USER.findById(payload.id);
-  //   if (!user) throw new Error('user not found');
-
-  //   user.verified = true;
-  //   await user.save();
-  //   return { message: 'Ваша почта успешно подверждена' };
-  // }
-  // // ***  resend verify email
-  // async resendVerificationCode(email) {
-  //   const user = await USER.findOne({ email });
-  //   if (!user) throw new Error('user not found');
-
-  //   const token = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-  //   const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
-  //   await sendMail({
-  //     to: email,
-  //     subject: 'Подтверждение почты',
-  //     html: `<p>Нажмите <a href="${verifyLink}">здесь</a>, чтобы подтвердить</p>`,
-  //   });
-
-  //   return { message: 'Письмо отправлено повторно' };
-  // }
 }
 
 const authServiece = new AuthService();
