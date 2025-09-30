@@ -6,7 +6,11 @@
           <h1>Профиль</h1>
           <p>Все детали профиля у вас тут</p>
         </div>
-        <ui-button variant="dark" @click="auth.logout()" class="ml-10">logout</ui-button>
+
+        <div class="profile__btns flex gap-1">
+          <ui-button variant="dark" @click="auth.logout()" class="ml-10">Админ панель</ui-button>
+          <ui-button variant="white" class="border">Выйти</ui-button>
+        </div>
       </div>
       <!--  -->
       <div class="profile__body grid w-full gap-5">
