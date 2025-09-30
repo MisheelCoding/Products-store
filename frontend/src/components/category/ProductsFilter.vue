@@ -25,12 +25,12 @@
             /> -->
             <h2 class="text-[8px] filter-title">Категорий</h2>
           </label>
-          <div class="overflow-x-auto min-h-11 py-5 px-2" ref="scrollContainer">
-            <button class="absolute top-[50px] left-1 z-10 cursor-pointer" @click="scroll(-150)">
+          <div class="overflow-x-auto min-h-11 py-5 px-2 flex" ref="scrollContainer">
+            <button class="absolute top-[65px] left-1 z-10 cursor-pointer i" @click="scroll(-150)">
               ⬅
             </button>
             <ui-button
-              class="mr-2"
+              class="mr-2 shrink-0"
               :class="{ active: $route.params.id === 'all' }"
               :variant="$route.params.id === 'all' ? 'dark' : 'outline'"
               :to="{ name: 'category', params: { id: 'all' } }"
@@ -38,7 +38,7 @@
               >Все</ui-button
             >
             <ui-button
-              class="mr-2"
+              class="mr-2 shrink-0"
               :class="{ active: $route.params.id === item.id }"
               :variant="$route.params.id === item.id ? 'dark' : 'outline'"
               :to="{ name: 'category', params: { id: item.id } }"
@@ -50,7 +50,7 @@
 
             <!-- arrow -->
             <button
-              class="absolute right-1 z-10 top-[50px] cursor-pointer rotate-180"
+              class="absolute right-1 z-10 top-[65px] cursor-pointer rotate-180"
               @click="scroll(150)"
             >
               ⬅

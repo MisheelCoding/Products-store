@@ -1,10 +1,10 @@
 <template>
   <article
     v-if="props.product"
-    class="product-card flex gap-3 relative rounded-2xl shadow transition shadow-neutral-800/70 hover overflow-hidden max-w-[25rem]"
+    class="product-card flex gap-3 relative rounded-2xl shadow transition shadow-neutral-800/70 hover overflow-hidden max-w-[25rem] !w-full"
     :class="{
       'flex-row max-h-[7rem] w-full ': variant === 'cart',
-      'h-[26rem] max-w-[20rem]  flex-col': variant === 'default' || variant === 'favorite',
+      'h-[26rem] !max-w-[22rem]  flex-col ': variant === 'default' || variant === 'favorite',
     }"
   >
     <div
@@ -62,7 +62,7 @@
 
         <div class="flex gap-3 justify-between">
           <div
-            class="product-card__footer flex justify-between items-center pl-3"
+            class="product-card__footer flex justify-between items-center pl-3 grow"
             v-if="variant === 'cart' || variant === 'default'"
           >
             <div class="product-card__controlls flex justify-center items-center gap-3">
