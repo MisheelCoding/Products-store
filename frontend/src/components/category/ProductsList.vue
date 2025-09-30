@@ -17,8 +17,8 @@
         class="justify-self-center"
       />
     </template>
-    <div ref="sentinel"></div>
   </div>
+  <div ref="sentinel" class="mt-20"></div>
 </template>
 
 <script setup lang="ts">

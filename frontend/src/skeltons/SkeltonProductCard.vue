@@ -1,9 +1,9 @@
 <template>
   <article
-    class="product-card flex gap-3 relative rounded-2xl shadow animate-pulse bg-neutral-200 overflow-hidden"
+    class="product-card flex gap-3 relative rounded-2xl shadow animate-pulse bg-neutral-200 overflow-hidden !w-full"
     :class="{
       'flex-row max-h-[7rem] w-full': variant === 'cart',
-      'h-[26rem] max-w-[20rem] flex-col': variant === 'default' || variant === 'favorite',
+      'h-[26rem] !max-w-[22rem] flex-col': variant === 'default' || variant === 'favorite',
     }"
   >
     <div
