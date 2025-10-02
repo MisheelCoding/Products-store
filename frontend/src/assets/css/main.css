@@ -18,6 +18,20 @@
   --accent-contrast: #ffffff; /* текст на акценте */
 
   color-scheme: light dark; /* нативные контролы подстраиваются */
+
+  --admin-bg: #070710;
+  --admin-bg-cart: #12131a;
+  --admin-bg-cart-gradient: linear-gradient(
+    190deg,
+    hsla(240, 14%, 17%, 1) 10%,
+    hsla(233, 18%, 9%, 1) 80%
+  );
+  --admin-bg-cart-gradient-hover: linear-gradient(
+    190deg,
+    hsla(240, 14%, 17%, 1) 10%,
+    hsla(233, 18%, 9%, 1) 40%
+  );
+  --admin-color: rgba(255, 255, 255, 0.9);
 }
 
 /* =========================

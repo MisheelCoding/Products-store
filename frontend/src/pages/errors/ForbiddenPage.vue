@@ -1,5 +1,5 @@
 <template>
-  <div>admin dashboard</div>
+  <div>403</div>
 </template>
 
 <script setup lang="ts"></script>
