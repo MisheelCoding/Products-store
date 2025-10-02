@@ -8,8 +8,8 @@
         </div>
 
         <div class="profile__btns flex gap-1">
-          <ui-button variant="dark" @click="auth.logout()" class="ml-10">Админ панель</ui-button>
-          <ui-button variant="white" class="border">Выйти</ui-button>
+          <ui-button variant="dark" :to="{ name: 'admin' }" class="ml-10">Админ панель</ui-button>
+          <ui-button variant="white" @click="auth.logout()" class="border">Выйти</ui-button>
         </div>
       </div>
       <!--  -->

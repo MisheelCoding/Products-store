@@ -15,7 +15,7 @@ export interface User {
   username: string
   email: string
 
-  roles: string[]
+  roles: UserRoles[]
   favorite: string[] //id храниться продуктов
   verified: boolean
   isBanned: boolean
@@ -31,3 +31,5 @@ export interface AuthResponse {
   accessToken: string
   user: User
 }
+
+export type UserRoles = 'ADMIN' | 'USER' | 'SUPER_ADMIN'

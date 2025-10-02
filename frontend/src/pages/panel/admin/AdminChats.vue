@@ -1,5 +1,5 @@
 <template>
-  <div>admin dashboard</div>
+  <div>AdminChats</div>
 </template>
 
 <script setup lang="ts"></script>
