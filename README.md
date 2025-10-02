@@ -10,7 +10,7 @@
 PORT=5007
 
 # Подключение к MongoDB
-MONGO_URL=ВАША_MONGO_ССЫЛКА_НА_БАЗУ
+MONGO_URL=ВАША_MONGO_ССЫЛКА_НА_БАЗУ # https://account.mongodb.com/ тут создайте Database => Clusters => Create
 
 # JWT секреты
 JWT_ACCESS_SECRET=SUPER_STRONG_ACCESS_SECRET
