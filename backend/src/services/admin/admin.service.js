@@ -3,9 +3,11 @@ import bcrypt from 'bcrypt';
 import { USER } from '#models/User.js';
 import { ORDER } from '#models/Order.js';
 import { sanitizePagination } from '#utils/limitPage.js';
+import { toClientMaskedUser } from '#utils/mapUser.js';
 
 class AdminService {
   // ---- USERS ----
+
   async getUsers({ q, role, page = 1, limit = 20, sort = 'createdAt_desc' }) {
     ({ page, limit } = sanitizePagination(page, limit));
 
@@ -13,7 +15,7 @@ class AdminService {
     if (q) {
       filter.$or = [
         { username: { $regex: q, $options: 'i' } },
-        { email: { $regex: q, $options: 'i' } },
+        // { email: { $regex: q, $options: 'i' } },
       ];
     }
     if (role) {
@@ -33,12 +35,19 @@ class AdminService {
         .select('-password')
         .sort(sortOption)
         .skip((page - 1) * limit)
-        .limit(limit)
-        .lean(),
+        .limit(limit),
+      // .lean(),
+
       USER.countDocuments(filter),
     ]);
 
-    return { items, total, page, totalPages: Math.ceil(total / limit) };
+    return {
+      // items: items.map((user) => toClientUser(user)),
+      items: items.map(toClientMaskedUser),
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async postUser({ username, password, roles = ['USER'], email, region, store }) {

@@ -11,12 +11,13 @@ defineProps<{
 </script>
 
 <style scoped>
-.ui-link.active {
-  background: var(--admin-bg-cart-gradient);
-  box-shadow: inset -1px 0px 0px rgba(255, 255, 255, 0.4);
-
+.ui-link {
   padding: 1rem 0.6rem;
   border-radius: 1rem;
+}
+.ui-link.active {
+  background: var(--admin-bg-cart-gradient);
+  box-shadow: inset 1px 0px 0px rgba(255, 255, 255, 0.4);
 }
 
 .ui-link.active:hover {

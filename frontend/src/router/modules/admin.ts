@@ -44,6 +44,13 @@ export const admingRoutes: AppRouteRecordRaw[] = [
           roles: ['ADMIN', 'SUPER_ADMIN'],
           requiresAuth: true,
         },
+        children: [
+          {
+            path: ':id',
+            component: () => import('@/pages/panel/shared/PanelDetailPage.vue'),
+            props: true,
+          },
+        ],
       },
       {
         path: 'chats',

@@ -1,3 +1,4 @@
+import type { PaginatedResponse } from './common/api'
 import type { SortOption } from './products.filters'
 import type { ValueOf } from './valueOf'
 
@@ -60,11 +61,15 @@ export interface ProductAdmin extends Product {
 }
 
 // ?? ответ листинга где сколько товаров, сколько страниц на каком все такое
-export interface ProductsListResponse {
-  items: Product[]
-  total: number
-  page: number
-  totalPages: number
+// export interface ProductsListResponse {
+//   items: Product[]
+//   total: number
+//   page: number
+//   totalPages: number
+//   storeKey: StoreKey
+// }
+
+export interface ProductsListResponse extends PaginatedResponse<Product> {
   storeKey: StoreKey
 }
 // ?? Products QUERY params
