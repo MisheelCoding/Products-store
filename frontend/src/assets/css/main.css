@@ -1,3 +1,4 @@
+@import './ui';
 @import './fonts';
 @import './tailwind';
 /* =========================
@@ -19,6 +20,7 @@
 
   color-scheme: light dark; /* нативные контролы подстраиваются */
 
+  --admin-color-helper: rgb(135, 112, 240);
   --admin-bg: #fff;
   --admin-bg-cart: #12131a;
   --admin-bg-cart-gradient: linear-gradient(
@@ -178,6 +180,7 @@ input[type='number'] {
 
 input {
   outline: none;
+  accent-color: var(--admin-color-helper);
 }
 
 .inp {

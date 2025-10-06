@@ -11,8 +11,9 @@ router.use(authMiddleware, checkRole(['ADMIN', 'SUPER_ADMIN']));
 router.get('/users', adminController.getUsers);
 router.post('/users', adminController.postUser);
 router.get('/users/:id', adminController.getOneUser);
-router.put('/users/:id', adminController.updateUser);
+router.patch('/users', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);
+router.delete('/users', adminController.deleteUser);
 
 // ==== ORDERS ====
 router.get('/orders', adminController.getOrders);

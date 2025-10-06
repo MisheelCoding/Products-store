@@ -1,8 +1,14 @@
 <template>
   <div class="action-menu relative flex justify-center items-center" :data-menu-id="payload.id">
     <button @click="emit('toggle')" class="">
-      <Icon icon="mi:options-vertical" width="30px" height="30px" style="color: #fff" />
+      <Icon
+        icon="mi:options-vertical"
+        width="30px"
+        height="30px"
+        :style="{ color: open ? 'var(--admin-color-helper)' : '#fff' }"
+      />
     </button>
+
     <div v-show="open" class="absolute action-menu__container z-2 p-2">
       <button
         class="flex items-center"
@@ -48,7 +54,7 @@ const emit = defineEmits<{
   .action-menu {
     &__container {
       top: 0;
-      left: -20%;
+      left: -5%;
       background: var(--admin-bg-cart);
     }
   }
@@ -56,7 +62,7 @@ const emit = defineEmits<{
 @container admin-content (max-width: 450px) {
   .action-menu {
     &__container {
-      left: -100%;
+      left: -60%;
     }
   }
 }

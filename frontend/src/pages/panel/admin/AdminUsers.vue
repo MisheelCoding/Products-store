@@ -1,41 +1,22 @@
 <template>
-  <div class="panel-users">
+  <div class="panel-users" ref="usersTable">
     <h2 class="admin-title text-xl">Список пользователей</h2>
-    <table class="panel-users__table" ref="usersTable">
-      <thead>
-        <tr>
-          <th
-            v-for="col in tableData"
-            :key="col.key"
-            :class="{ 'hidden-mobile': col.hiddenMobile }"
-          >
-            {{ col.label }}
-          </th>
-          <th>Действия</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in currentUsers" :key="user.id" class="!max-h-[5rem]">
-          <td
-            v-for="col in tableData"
-            :key="col.key"
-            :class="[col.hiddenMobile ? 'hidden-mobile' : '', col.className?.(user)]"
-          >
-            {{ col.render ? col.render(user) : user[col.key] }}
-          </td>
-          <td>
-            <AdminActionMenu
-              :user="user"
-              :open="activeMenuId === user.id"
-              @delete="confirmDelete"
-              @toggleban="handleBan"
-              @edit="openDetail"
-              @toggle="toggleMenu(user.id)"
-            ></AdminActionMenu>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!--*** фильтр -->
+    <AdminUsersFilter />
+    <!--*** Таблица -->
+    <AdminUsersTable
+      :currentUsers="currentUsers || []"
+      :open="activeMenuId"
+      v-model:selectedUsers="selectedUsers"
+      :activeMenuId="activeMenuId"
+      :allSelected="allSelected"
+      @toggle-all="toggleAll"
+      @ban="handleBan"
+      @delete="confirmDelete"
+      @edit="openDetail"
+      @toggle-menu="toggleMenu"
+    />
+    <!--*** Пагинация -->
     <panel-pagination
       :items="pagination"
       :current-page="page"
@@ -47,21 +28,39 @@
 <script setup lang="ts">
 import { useAdminUsersStore } from '@/stores/admin/adminUsers'
 import type { User } from '@/types/auth'
-import { formatDateTime } from '@/utils/date'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import AdminActionMenu from './AdminActionMenu.vue'
-import { getPagination } from '@/utils/pagination'
-import PanelPagination from '@/pages/panel/shared/PanelPagination.vue'
 
-//vars
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { getPagination } from '@/utils/pagination'
+import PanelPagination from '@/components/panel/admin/shared/PanelPagination.vue'
+import AdminUsersFilter from '@/components/panel/admin/users/AdminUsersFilter.vue'
+
+import AdminUsersTable from '@/components/panel/admin/users/AdminUsersTable.vue'
+
+import { getErrorMessage } from '@/scripts/api'
+
 const useUsers = useAdminUsersStore()
 const { usersByPage, page, totalPages } = storeToRefs(useUsers)
+//vars
 const activeMenuId = ref<string | null>(null)
 const usersTable = ref<HTMLElement | null>(null)
+const selectedUsers = ref<string[]>([])
+
 //computed
 const currentUsers = computed(() => usersByPage.value.get(page.value))
 const pagination = computed(() => getPagination(page.value, totalPages.value, 5))
+const allSelected = computed(() =>
+  currentUsers.value ? selectedUsers.value.length === currentUsers.value.length : false,
+)
+
+function toggleAll(e: Event) {
+  const checked = (e.target as HTMLInputElement).checked
+  if (checked && currentUsers.value) {
+    selectedUsers.value = currentUsers.value.map((u) => u.id)
+  } else {
+    selectedUsers.value = []
+  }
+}
 
 async function changePage(newPage: number) {
   useUsers.setPage(newPage)
@@ -80,21 +79,6 @@ const handleClickOutside = (e: MouseEvent) => {
   }
 }
 
-// класс для статуса блокировки
-const banStatusClass = (user: User) => {
-  if (user.roles.includes('SUPER_ADMIN')) return 'text-gray-500' // например, нельзя менять
-  return user.isBanned ? 'text-red-500' : 'text-green-500'
-}
-
-// текст статуса блокировки
-const banStatusText = (user: User) => {
-  if (user.roles.includes('SUPER_ADMIN')) return 'Нельзя заблокировать'
-  return user.isBanned ? 'Заблокирован' : 'Незаблокирован'
-}
-
-// класс для верификации
-const verifiedClass = (user: User) => (user.verified ? 'text-green-500' : 'text-red-500')
-
 function openDetail(u: User) {
   console.log('openDetail', u.id)
 }
@@ -103,8 +87,14 @@ function confirmDelete(u: User) {
   console.log('confirmDelete', u.id)
 }
 
-function handleBan(u: User) {
-  console.log('handleBan', u.id)
+async function handleBan(u: User | User[], ban?: boolean) {
+  const ids: string[] = Array.isArray(u) ? u.map((user) => user.id) : [u.id]
+  const shouldBan = ban !== undefined ? ban : !Array.isArray(u) ? !u.isBanned : undefined
+  try {
+    await useUsers.updateUsers(ids, { isBanned: shouldBan })
+  } catch (e) {
+    console.log(getErrorMessage(e))
+  }
 }
 
 onMounted(async () => {
@@ -119,45 +109,6 @@ onUnmounted(() => {
     usersTable.value.removeEventListener('click', handleClickOutside)
   }
 })
-
-type TableColumn<T> = {
-  key: keyof T
-  label: string
-  hiddenMobile?: boolean
-  render?: (row: T) => string | number | boolean | null
-  className?: (row: T) => string | undefined
-}
-
-const tableData: TableColumn<User>[] = [
-  { key: 'username', label: 'Имя' },
-  { key: 'email', label: 'Email', hiddenMobile: true },
-  { key: 'phone', label: 'Телефон', hiddenMobile: true },
-  {
-    key: 'roles',
-    label: 'Роли',
-    render: (u) => u.roles.join(', '),
-  },
-  {
-    key: 'verified',
-    label: 'Верификация',
-    hiddenMobile: true,
-    render: (u) => (u.verified ? 'Подтвержден' : 'Неподтвержден'),
-    className: (u) => verifiedClass(u),
-  },
-  {
-    key: 'isBanned',
-    label: 'Статус',
-    hiddenMobile: true,
-    render: (u) => banStatusText(u),
-    className: (u) => banStatusClass(u),
-  },
-  {
-    key: 'createdAt',
-    label: 'Создан',
-    hiddenMobile: true,
-    render: (u) => formatDateTime(u.createdAt, false),
-  },
-]
 </script>
 
 <style scoped lang="scss">
@@ -166,13 +117,13 @@ const tableData: TableColumn<User>[] = [
 
   &__table {
     width: 100%;
-    min-height: 80svh;
+    min-height: 75svh;
     overflow-y: auto;
     border-collapse: collapse;
 
     th,
     td {
-      padding: 0.5rem;
+      padding: 0.25rem;
       text-align: left;
     }
 
@@ -183,11 +134,6 @@ const tableData: TableColumn<User>[] = [
     thead {
       background-color: #4444445f;
     }
-  }
-}
-@container admin-content (max-width: 900px) {
-  .hidden-mobile {
-    display: none;
   }
 }
 </style>

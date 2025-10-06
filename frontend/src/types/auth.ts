@@ -27,7 +27,7 @@ export interface User {
   __v?: number
 }
 
-export interface AuthResponse {
+export interface AuthResponseDTO {
   accessToken: string
   user: User
 }

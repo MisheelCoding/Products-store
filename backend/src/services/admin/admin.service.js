@@ -3,20 +3,26 @@ import bcrypt from 'bcrypt';
 import { USER } from '#models/User.js';
 import { ORDER } from '#models/Order.js';
 import { sanitizePagination } from '#utils/limitPage.js';
-import { toClientMaskedUser } from '#utils/mapUser.js';
+import { toClientMaskedUser, toClientUser } from '#utils/mapUser.js';
 
 class AdminService {
   // ---- USERS ----
 
-  async getUsers({ q, role, page = 1, limit = 20, sort = 'createdAt_desc' }) {
+  async getUsers({ q, role, page = 1, limit = 20, sort = 'createdAt_desc' }, currentUser) {
     ({ page, limit } = sanitizePagination(page, limit));
+
+    const isSuperAdmin = currentUser.roles.includes('SUPER_ADMIN');
 
     const filter = {};
     if (q) {
-      filter.$or = [
-        { username: { $regex: q, $options: 'i' } },
-        // { email: { $regex: q, $options: 'i' } },
-      ];
+      if (isSuperAdmin) {
+        filter.$or = [
+          { username: { $regex: q, $options: 'i' } },
+          { email: { $regex: q, $options: 'i' } },
+        ];
+      } else {
+        filter.$or = [{ username: { $regex: q, $options: 'i' } }];
+      }
     }
     if (role) {
       filter.roles = role; // или { $in: [role] } если хочешь гибче
@@ -34,6 +40,7 @@ class AdminService {
       USER.find(filter)
         .select('-password')
         .sort(sortOption)
+        .collation({ locale: 'en', strength: 1 })
         .skip((page - 1) * limit)
         .limit(limit),
       // .lean(),
@@ -43,7 +50,7 @@ class AdminService {
 
     return {
       // items: items.map((user) => toClientUser(user)),
-      items: items.map(toClientMaskedUser),
+      items: items.map(isSuperAdmin ? toClientUser : toClientMaskedUser),
       total,
       page,
       totalPages: Math.ceil(total / limit),
@@ -72,44 +79,59 @@ class AdminService {
     return plain;
   }
 
-  async updateUser(id, { username, roles, email, region, store, isBanned }) {
-    const user = await USER.findById(id);
-    if (!user) throw new Error('Пользователь не найден');
+  async updateUser(ids, data, currentAdminId) {
+    const idArray = Array.isArray(ids) ? ids : [ids];
+    const users = await USER.find({ _id: { $in: idArray } });
+    if (!users) throw new Error('Пользователи не найдены');
 
-    // Защита SUPER_ADMIN
-    if (user.roles.includes('SUPER_ADMIN')) {
-      throw new Error('Нельзя изменять SUPER_ADMIN');
+    const updatedUsers = [];
+    for (const user of users) {
+      if (user.roles.includes('SUPER_ADMIN')) {
+        continue;
+        // throw new Error('Нельзя изменять SUPER_ADMIN');
+      }
+      if (user._id.toString() === currentAdminId) {
+        continue;
+        // throw new Error('Нельзя Свои данные обновить');
+      }
+
+      const payload = {};
+      if (data.username !== undefined) payload.username = data.username;
+      if (data.email !== undefined) payload.email = data.email;
+      if (Array.isArray(data.roles)) payload.roles = data.roles;
+      if (data.region !== undefined) payload.region = data.region;
+      if (data.store !== undefined) payload.store = data.store;
+      if (typeof data.isBanned === 'boolean') payload.isBanned = data.isBanned;
+
+      const updated = await USER.findByIdAndUpdate(user._id, payload, { new: true })
+        .select('-password')
+        .lean();
+
+      if (!updated) throw new Error('Пользователь не найден');
+      if (updated) updatedUsers.push(updated);
     }
-
-    const payload = {};
-    if (username !== undefined) payload.username = username;
-    if (email !== undefined) payload.email = email;
-    if (Array.isArray(roles)) payload.roles = roles;
-    if (region !== undefined) payload.region = region;
-    if (store !== undefined) payload.store = store;
-    if (typeof isBanned === 'boolean') payload.isBanned = isBanned;
-
-    const updated = await USER.findByIdAndUpdate(id, payload, { new: true })
-      .select('-password')
-      .lean();
-
-    if (!updated) throw new Error('Пользователь не найден');
-    return updated;
+    return updatedUsers;
+    // Защита SUPER_ADMIN
   }
 
-  async deleteUser(id, currentAdminId) {
-    const user = await USER.findById(id);
-    if (!user) throw new Error('Пользователь не найден');
+  async deleteUser(ids, currentAdminId) {
+    const idList = Array.isArray(ids) ? ids : [ids];
 
-    if (currentAdminId && String(id) === String(currentAdminId)) {
-      throw new Error('Нельзя удалить самого себя');
-    }
-    if (user.roles.includes('SUPER_ADMIN')) {
-      throw new Error('Нельзя удалять SUPER_ADMIN');
+    for (const id of idList) {
+      if (currentAdminId && String(id) === String(currentAdminId)) {
+        throw Error('Нельзя удалить самого себя');
+      }
+
+      const user = await USER.findById(id);
+      if (!user) throw new Error('Пользователь не найден');
+      if (user.roles.includes('SUPER_ADMIN')) {
+        throw new Error(`Нельзя удалять SUPER_ADMIN (id=${id})`);
+      }
     }
 
-    await USER.findByIdAndDelete(id);
-    return { ok: true };
+    await USER.deleteMany({ _id: { $in: idList } });
+
+    return { ok: true, deleted: idList.length };
   }
 
   async getOneUser(id) {

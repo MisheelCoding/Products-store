@@ -48,6 +48,7 @@ const userSchema = new mongoose.Schema(
     region: { type: String, default: null },
     store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
     savedCards: [savedCardSchema],
+    profilePhoto: { type: String, default: null },
   },
   { timestamps: true },
 );
