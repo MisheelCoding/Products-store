@@ -29,7 +29,8 @@ const addressSchema = new mongoose.Schema(
 addressSchema.plugin(encrypt, {
   encryptionKey: process.env.ENCRYPTION_KEY,
   signingKey: process.env.SIGNING_KEY,
-  encryptedFields: ['phone'],
+  encryptedFields: ['phone', 'addressLine'],
+  // decryptPostSave: false, // Ключевая опция - не расшифровывать автоматически
 });
 
 const userSchema = new mongoose.Schema(
@@ -47,6 +48,7 @@ const userSchema = new mongoose.Schema(
     region: { type: String, default: null },
     store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
     savedCards: [savedCardSchema],
+    profilePhoto: { type: String, default: null },
   },
   { timestamps: true },
 );
@@ -63,6 +65,7 @@ userSchema.plugin(encrypt, {
   signingKey: process.env.SIGNING_KEY,
   encryptedFields: ['phone', 'email'],
   // encryptedFields: ['phone'],
+  // decryptPostSave: false, // Ключевая опция - не расшифровывать автоматически
 });
 
 export const USER = mongoose.model('User', userSchema);

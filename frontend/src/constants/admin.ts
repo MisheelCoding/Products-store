@@ -4,7 +4,7 @@ export const PANEL_ADMIN_LINKS: PanelLink[] = [
   {
     title: 'dashboard',
     link: '/admin/dashboard',
-    icon: 'mage:dashboard',
+    icon: 'stash:dashboard-light',
   },
   {
     title: 'users',

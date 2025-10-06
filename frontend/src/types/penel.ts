@@ -1,3 +1,6 @@
+import type { User } from '@/types/auth'
+import type { PaginatedResponse } from './common/api'
+
 export type AdminPage = 'dashboard' | 'orders' | 'users' | 'chats'
 
 export const ADMIN_PAGE_TITLES: Record<AdminPage, string> = {
@@ -8,7 +11,7 @@ export const ADMIN_PAGE_TITLES: Record<AdminPage, string> = {
 } as const
 
 export type AdminIcon =
-  | 'mage:dashboard'
+  | 'stash:dashboard-light'
   | 'material-symbols-light:orders-outline-rounded'
   | 'mage:users'
   | 'ph:chats-circle-thin'
@@ -19,3 +22,5 @@ export interface PanelLink {
   link: `/admin/${AdminPage}`
   badge?: number
 }
+
+export type UsersResponse = PaginatedResponse<User>

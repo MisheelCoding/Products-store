@@ -3,7 +3,7 @@ import { adminService } from '#services/admin/admin.service.js';
 class AdminController {
   async getUsers(req, res) {
     try {
-      const data = await adminService.getUsers(req.query);
+      const data = await adminService.getUsers(req.query, req.user);
       res.json(data);
     } catch (e) {
       res.status(400).json({ message: e.message });
@@ -19,16 +19,21 @@ class AdminController {
   }
   async updateUser(req, res) {
     try {
-      const user = await adminService.updateUser(req.params.id, req.body);
-      res.json(user);
+      const { ids, data } = req.body;
+      const updatedUser = await adminService.updateUser(ids, data, req.user?.id);
+      res.json(updatedUser);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
   }
   async deleteUser(req, res) {
     try {
-      const user = await adminService.deleteUser(req.params.id, req.user?.id);
-      res.json(user);
+      const ids = req.params.id || req.body.ids;
+      if (!ids) {
+        throw new Error('id или ids обязательны');
+      }
+      const result = await adminService.deleteUser(ids, req.user?.id);
+      res.json(result);
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
