@@ -22,7 +22,20 @@
             <div
               class="avatar__layout bg-gray-500 w-[7rem] h-[7rem] flex justify-center items-center rounded-full"
             >
-              <img :src="avatarImg" class="avatar__img rounded-full w-full h-full" />
+              <!-- <img :src="avatarImg" class="avatar__img rounded-full w-full h-full" />  -->
+              <img
+                v-if="avatarUrl"
+                :src="avatarUrl"
+                alt="Фото профиля"
+                class="avatar__img rounded-full w-full h-full object-cover"
+              />
+              <img
+                v-else
+                :src="avatarImg"
+                alt="Фото по умолчанию"
+                class="avatar__img rounded-full w-full h-full object-cover"
+              />
+              <div v-if="profileStore.isAvatarLoading" class="avatar__loading">Загрузка...</div>
             </div>
           </div>
         </div>
@@ -58,11 +71,35 @@ import ProfilePhone from '@/components/profile/ProfilePhone.vue'
 
 import UiButton from '@/components/ui/UiButton.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useProfileStore } from '@/stores/profile'
 import { Icon } from '@iconify/vue'
 import { storeToRefs } from 'pinia'
+import { computed, onMounted } from 'vue'
 
 const auth = useAuthStore()
+const profileStore = useProfileStore()
 const { user } = storeToRefs(auth)
+
+// Безопасное получение данных из profileStore
+const avatarUrl = computed(() => profileStore.avatarUrl)
+const addresses = computed(() => profileStore.addresses)
+
+onMounted(async () => {
+  console.log(avatarUrl.value)
+  try {
+    // Инициализируем данные профиля
+    await profileStore.ensureAvatar() // Загружаем аватар
+    await profileStore.getAddresses() // Загружаем адреса
+
+    // Запускаем автообновление аватара
+    profileStore.startAvatarAutoRefresh()
+
+    console.log('Avatar URL:', avatarUrl.value)
+    console.log('Addresses:', addresses.value)
+  } catch (error) {
+    console.error('Ошибка инициализации профиля:', error)
+  }
+})
 </script>
 
 <style scoped>
