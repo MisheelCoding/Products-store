@@ -48,7 +48,9 @@ const userSchema = new mongoose.Schema(
     region: { type: String, default: null },
     store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
     savedCards: [savedCardSchema],
-    profilePhoto: { type: String, default: null },
+    profilePhoto: {
+      public_id: { type: String, default: null }, // надо поменять public_id на key чтобы работать корректно S3 c TS В бдудушем
+    },
   },
   { timestamps: true },
 );
@@ -67,5 +69,14 @@ userSchema.plugin(encrypt, {
   // encryptedFields: ['phone'],
   // decryptPostSave: false, // Ключевая опция - не расшифровывать автоматически
 });
+
+userSchema.virtual('orders', {
+  ref: 'Order',
+  localField: '_id',
+  foreignField: 'user',
+});
+
+userSchema.set('toObject', { virtuals: true });
+userSchema.set('toJSON', { virtuals: true });
 
 export const USER = mongoose.model('User', userSchema);

@@ -8,7 +8,13 @@
         </div>
 
         <div class="profile__btns flex gap-1">
-          <ui-button variant="dark" :to="{ name: 'admin' }" class="ml-10">Админ панель</ui-button>
+          <ui-button
+            v-if="auth.checkRole(['ADMIN', 'SUPER_ADMIN'])"
+            variant="dark"
+            :to="{ name: 'admin' }"
+            class="ml-10"
+            >Админ панель</ui-button
+          >
           <ui-button variant="white" @click="auth.logout()" class="border">Выйти</ui-button>
         </div>
       </div>
@@ -22,7 +28,31 @@
             <div
               class="avatar__layout bg-gray-500 w-[7rem] h-[7rem] flex justify-center items-center rounded-full"
             >
-              <img :src="avatarImg" class="avatar__img rounded-full w-full h-full" />
+              <!-- <img :src="avatarImg" class="avatar__img rounded-full w-full h-full" />  -->
+              <img
+                v-if="avatarUrl"
+                :src="avatarUrl"
+                alt="Фото профиля"
+                class="avatar__img rounded-full w-full h-full object-cover"
+              />
+              <div v-else>Нету фото у вас</div>
+              <label
+                for="avatarInput"
+                class="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 bg-opacity-30 text-white opacity-0 hover:opacity-100 cursor-pointer transition text-center"
+              >
+                загрузить фото
+              </label>
+
+              <!-- Скрытый input для загрузки -->
+              <input
+                id="avatarInput"
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="onAvatarChange"
+              />
+
+              <div v-if="profileStore.isAvatarLoading" class="avatar__loading">Загрузка...</div>
             </div>
           </div>
         </div>
@@ -50,7 +80,6 @@
 </template>
 
 <script setup lang="ts">
-import avatarImg from '@/assets/img/optimized/avatar-exapmle.webp'
 import ProfileAdresses from '@/components/profile/ProfileAddresses.vue'
 import ProfileDateInfo from '@/components/profile/ProfileDateInfo.vue'
 import ProfileEmail from '@/components/profile/ProfileEmail.vue'
@@ -58,11 +87,46 @@ import ProfilePhone from '@/components/profile/ProfilePhone.vue'
 
 import UiButton from '@/components/ui/UiButton.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useProfileStore } from '@/stores/profile'
 import { Icon } from '@iconify/vue'
 import { storeToRefs } from 'pinia'
+import { computed, onMounted } from 'vue'
 
 const auth = useAuthStore()
+const profileStore = useProfileStore()
 const { user } = storeToRefs(auth)
+
+// Безопасное получение данных из profileStore
+const avatarUrl = computed(() => profileStore.avatarUrl)
+const addresses = computed(() => profileStore.addresses)
+
+async function onAvatarChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (!target.files?.length) return
+
+  const file = target.files[0]
+  try {
+    await profileStore.uploadAvatar(file)
+  } catch (e) {
+    console.log(e)
+  }
+}
+onMounted(async () => {
+  console.log(avatarUrl.value)
+  try {
+    // Инициализируем данные профиля
+    await profileStore.ensureAvatar() // Загружаем аватар
+    await profileStore.getAddresses() // Загружаем адреса
+
+    // Запускаем автообновление аватара
+    profileStore.startAvatarAutoRefresh()
+
+    console.log('Avatar URL:', avatarUrl.value)
+    console.log('Addresses:', addresses.value)
+  } catch (error) {
+    console.error('Ошибка инициализации профиля:', error)
+  }
+})
 </script>
 
 <style scoped>

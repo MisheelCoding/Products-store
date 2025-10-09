@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { Icon } from '@iconify/vue'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import UiButton from '@/components/ui/UiButton.vue'
+import { useRoute, useRouter } from 'vue-router'
 const auth = useAuthStore()
 
 const schema = yup.object({
   username: yup.string().required('Введите имя пользователя или Email').min(3, 'Минимум 3 символа'),
   password: yup.string().required('Введите пароль').min(6, 'Минимум 6 символов'),
 })
+
+const route = useRoute()
+const router = useRouter()
 
 const { handleSubmit } = useForm({
   validationSchema: schema,
@@ -26,9 +30,33 @@ const submit = handleSubmit(async (values) => {
     await auth.login(values.username, values.password)
     // для быстрой проверки:
     console.log('Логин ок:', auth.user)
+
+    const redirect = route.query.redirect as string
+    if (redirect && redirect.startsWith('/')) {
+      router.replace(redirect)
+    } else {
+      router.replace('/')
+    }
   } catch (e) {
     // ошибка уже в auth.error
     console.log('err', e)
+  }
+})
+
+onMounted(() => {
+  if (auth.user && auth.isAuthenticated) {
+    // Если в query есть redirect — туда, иначе назад или на главную
+    const redirect = route.query.redirect as string
+    if (redirect && redirect.startsWith('/')) {
+      router.replace(redirect)
+    } else {
+      // можно вернуть на предыдущую страницу или на главную
+      router.replace(
+        document.referrer && document.referrer.includes(window.location.origin)
+          ? document.referrer.replace(window.location.origin, '')
+          : '/',
+      )
+    }
   }
 })
 </script>

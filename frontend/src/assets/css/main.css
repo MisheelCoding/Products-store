@@ -61,14 +61,16 @@ html.dark {
     hsla(233, 18%, 9%, 1) 40%
   );
   --admin-color: rgba(255, 255, 255, 0.9);
-  /* можешь оставить тот же акцент или сделать другой для dark */
-  /* --accent: #8b5cf6; */
+
+  /* *** admin grafic colors */
+  --dashboard-chart-color-1: #332560 /* можешь оставить тот же акцент или сделать другой для dark */
+    /* --accent: #8b5cf6; */;
 }
 
 /* =========================
    Контекст бренда (опционально)
    ========================= */
-/* магазин → зелёный */
+
 html[data-app='shop'] {
   --accent: #16a34a;
   --accent-contrast: #ffffff;
@@ -194,4 +196,12 @@ input {
   border-radius: 15px;
   background-color: #ffffff;
   color: black;
+}
+
+/* admin */
+.admin-card {
+  background: var(--admin-bg-cart-gradient);
+  color: var(--fg);
+  /* padding: 1.25rem; */
+  border-radius: 12px;
 }

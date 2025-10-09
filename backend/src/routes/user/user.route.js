@@ -1,6 +1,8 @@
 import { orderController } from '#controllers/user/order.controller.js';
+import { uploadProfilePhoto, getProfilePhoto } from '#controllers/user/profile.controller.js';
 import { userController } from '#controllers/user/user.controller.js';
 import { authMiddleware } from '#middlewares/auth/auth.js';
+import { upload } from '#middlewares/upload/upload.js';
 import express from 'express';
 
 const router = express.Router();
@@ -27,5 +29,9 @@ router.delete('/phone', userController.deleteNumber);
 // *** order
 router.post('/orders', orderController.createOrder);
 router.get('/orders', orderController.getOrders);
+
+// *** profile routes
+router.post('/profile/photo', upload.single('avatar'), uploadProfilePhoto);
+router.get('/profile/photo', getProfilePhoto);
 
 export default router;
