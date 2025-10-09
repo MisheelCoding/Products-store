@@ -34,9 +34,9 @@
 </template>
 
 <script setup lang="ts">
-import DashboardCategories from '../../../../../../helpers/githubHelp/DashboardCategories.vue'
-import DashnoardOrders from '../../../../../../helpers/githubHelp/DashnoardOrders.vue'
-import SharedCounterCard from '../../../../../../helpers/githubHelp/SharedCounterCard.vue'
+import DashboardCategories from '@/components/panel/admin/dashboard/DashboardCategories.vue'
+import DashnoardOrders from '@/components/panel/admin/dashboard/DashnoardOrders.vue'
+import SharedCounterCard from '@/components/shared/SharedCounterCard.vue'
 </script>
 
 <style scoped lang="scss">
