@@ -8,7 +8,13 @@
         </div>
 
         <div class="profile__btns flex gap-1">
-          <ui-button variant="dark" :to="{ name: 'admin' }" class="ml-10">Админ панель</ui-button>
+          <ui-button
+            v-if="auth.checkRole(['ADMIN', 'SUPER_ADMIN'])"
+            variant="dark"
+            :to="{ name: 'admin' }"
+            class="ml-10"
+            >Админ панель</ui-button
+          >
           <ui-button variant="white" @click="auth.logout()" class="border">Выйти</ui-button>
         </div>
       </div>
@@ -29,12 +35,23 @@
                 alt="Фото профиля"
                 class="avatar__img rounded-full w-full h-full object-cover"
               />
-              <img
-                v-else
-                :src="avatarImg"
-                alt="Фото по умолчанию"
-                class="avatar__img rounded-full w-full h-full object-cover"
+              <div v-else>Нету фото у вас</div>
+              <label
+                for="avatarInput"
+                class="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 bg-opacity-30 text-white opacity-0 hover:opacity-100 cursor-pointer transition text-center"
+              >
+                загрузить фото
+              </label>
+
+              <!-- Скрытый input для загрузки -->
+              <input
+                id="avatarInput"
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="onAvatarChange"
               />
+
               <div v-if="profileStore.isAvatarLoading" class="avatar__loading">Загрузка...</div>
             </div>
           </div>
@@ -63,7 +80,6 @@
 </template>
 
 <script setup lang="ts">
-import avatarImg from '@/assets/img/optimized/avatar-exapmle.webp'
 import ProfileAdresses from '@/components/profile/ProfileAddresses.vue'
 import ProfileDateInfo from '@/components/profile/ProfileDateInfo.vue'
 import ProfileEmail from '@/components/profile/ProfileEmail.vue'
@@ -84,6 +100,17 @@ const { user } = storeToRefs(auth)
 const avatarUrl = computed(() => profileStore.avatarUrl)
 const addresses = computed(() => profileStore.addresses)
 
+async function onAvatarChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (!target.files?.length) return
+
+  const file = target.files[0]
+  try {
+    await profileStore.uploadAvatar(file)
+  } catch (e) {
+    console.log(e)
+  }
+}
 onMounted(async () => {
   console.log(avatarUrl.value)
   try {

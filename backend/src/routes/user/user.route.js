@@ -31,7 +31,7 @@ router.post('/orders', orderController.createOrder);
 router.get('/orders', orderController.getOrders);
 
 // *** profile routes
-router.post('/profile/photo', upload.single('photo'), uploadProfilePhoto);
+router.post('/profile/photo', upload.single('avatar'), uploadProfilePhoto);
 router.get('/profile/photo', getProfilePhoto);
 
 export default router;

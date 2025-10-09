@@ -3,7 +3,7 @@
 // stores/auth.ts
 import { defineStore } from 'pinia'
 import api from '@/scripts/api'
-import type { User, AuthResponseDTO } from '@/types/auth'
+import type { User, AuthResponseDTO, UserRoles } from '@/types/auth'
 import { useRouter } from 'vue-router'
 import { computed, ref } from 'vue'
 
@@ -18,7 +18,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   // ??getters
   const isAuthenticated = computed(() => !!accessToken.value && !!user.value)
-  const checkRole = (role: string) => user.value?.roles.includes(role) ?? false
+  const checkRole = (roles: UserRoles | UserRoles[]) => {
+    const rolesArray = Array.isArray(roles) ? roles : [roles]
+    return rolesArray.some((role) => user.value?.roles.includes(role)) ?? false
+  }
 
   //?? actions
 

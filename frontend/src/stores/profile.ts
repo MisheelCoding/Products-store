@@ -19,6 +19,28 @@ export const useProfileStore = defineStore('profile', () => {
   const isAvatarLoading = ref(false)
 
   let avatarIntervalId: ReturnType<typeof setInterval> | null = null
+
+  //** загрузить аватар  */
+  async function uploadAvatar(file: File) {
+    if (!file) return
+    isAvatarLoading.value = true
+    try {
+      const formData = new FormData()
+      formData.append('avatar', file)
+
+      const { data } = await api.post('/api/user/profile/photo', formData, {
+        withCredentials: true,
+      })
+
+      await fetchAvatar()
+      return data
+    } catch (e) {
+      console.error('Ошибка при загрузке аватара:', e)
+      throw e
+    } finally {
+      isAvatarLoading.value = false
+    }
+  }
   //** получить аватар  */
   async function fetchAvatar() {
     isAvatarLoading.value = true
@@ -44,7 +66,7 @@ export const useProfileStore = defineStore('profile', () => {
 
   async function ensureAvatar() {
     const now = Date.now()
-    // Обновляем за 30 секунд до истечения (вместо 5)
+    // Обновляем за 30 секунд до истечения ()
     if (!avatarExpires.value || now > avatarExpires.value - 30000) {
       console.log('Обновляем URL аватара...')
       await fetchAvatar()
@@ -242,5 +264,6 @@ export const useProfileStore = defineStore('profile', () => {
     ensureAvatar,
     startAvatarAutoRefresh,
     stopAvatarAutoRefresh,
+    uploadAvatar,
   }
 })
