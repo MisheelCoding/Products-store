@@ -117,7 +117,7 @@ onUnmounted(() => {
 
   &__table {
     width: 100%;
-    min-height: 75svh;
+    min-height: 72.5svh;
     overflow-y: auto;
     border-collapse: collapse;
 
