@@ -1,7 +1,6 @@
-import type { RouteRecordRaw } from 'vue-router'
 import homePage from '@/pages/site/HomePage.vue'
 
-export const siteRoutes: RouteRecordRaw[] = [
+export const siteRoutes = [
   {
     path: '/',
     name: 'home',
@@ -92,11 +91,5 @@ export const siteRoutes: RouteRecordRaw[] = [
     name: 'terms',
     component: () => import('@/pages/site/TermsPage.vue'),
     meta: { title: 'Terms' },
-  },
-  {
-    path: '/:pathMatch(.*)*',
-    name: 'not-found',
-    component: () => import('@/pages/site/NotFoundPage.vue'),
-    meta: { title: 'Not Found' },
   },
 ]

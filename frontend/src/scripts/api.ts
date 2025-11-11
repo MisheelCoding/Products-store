@@ -6,7 +6,7 @@ import axios, {
   type AxiosRequestHeaders,
 } from 'axios'
 import { useAuthStore } from '@/stores/auth'
-import type { AuthResponse } from '@/types/auth'
+import type { AuthResponseDTO } from '@/types/auth'
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean
@@ -62,7 +62,7 @@ let refreshPromise: Promise<string> | null = null
 async function doRefresh(): Promise<string> {
   if (!refreshPromise) {
     refreshPromise = api
-      .post<AuthResponse>('/api/auth/refresh')
+      .post<AuthResponseDTO>('/api/auth/refresh')
       .then(({ data }) => {
         const store = useAuthStore()
         store.setAccessToken(data.accessToken)

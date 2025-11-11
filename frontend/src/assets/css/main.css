@@ -1,3 +1,4 @@
+@import './ui';
 @import './fonts';
 @import './tailwind';
 /* =========================
@@ -18,6 +19,21 @@
   --accent-contrast: #ffffff; /* текст на акценте */
 
   color-scheme: light dark; /* нативные контролы подстраиваются */
+
+  --admin-color-helper: rgb(135, 112, 240);
+  --admin-bg: #fff;
+  --admin-bg-cart: #12131a;
+  --admin-bg-cart-gradient: linear-gradient(
+    190deg,
+    hsla(240, 14%, 17%, 1) 10%,
+    hsla(233, 18%, 9%, 1) 80%
+  );
+  --admin-bg-cart-gradient-hover: linear-gradient(
+    190deg,
+    hsla(240, 14%, 17%, 1) 10%,
+    hsla(233, 18%, 9%, 1) 40%
+  );
+  --admin-color: rgba(255, 255, 255, 0.9);
 }
 
 /* =========================
@@ -31,14 +47,30 @@ html.dark {
   --border: #334155;
   --muted: #9ca3af;
 
-  /* можешь оставить тот же акцент или сделать другой для dark */
-  /* --accent: #8b5cf6; */
+  /* admin */
+  --admin-bg: #070710;
+  --admin-bg-cart: #12131a;
+  --admin-bg-cart-gradient: linear-gradient(
+    190deg,
+    hsla(240, 14%, 17%, 1) 10%,
+    hsla(233, 18%, 9%, 1) 80%
+  );
+  --admin-bg-cart-gradient-hover: linear-gradient(
+    190deg,
+    hsla(240, 14%, 17%, 1) 10%,
+    hsla(233, 18%, 9%, 1) 40%
+  );
+  --admin-color: rgba(255, 255, 255, 0.9);
+
+  /* *** admin grafic colors */
+  --dashboard-chart-color-1: #332560 /* можешь оставить тот же акцент или сделать другой для dark */
+    /* --accent: #8b5cf6; */;
 }
 
 /* =========================
    Контекст бренда (опционально)
    ========================= */
-/* магазин → зелёный */
+
 html[data-app='shop'] {
   --accent: #16a34a;
   --accent-contrast: #ffffff;
@@ -81,6 +113,10 @@ h4,
 h5,
 h6 {
   font-family: 'Onder', sans-serif;
+}
+
+.admin-title {
+  font-family: 'Raleway', sans-serif;
 }
 
 .title {
@@ -146,6 +182,7 @@ input[type='number'] {
 
 input {
   outline: none;
+  accent-color: var(--admin-color-helper);
 }
 
 .inp {
@@ -159,4 +196,12 @@ input {
   border-radius: 15px;
   background-color: #ffffff;
   color: black;
+}
+
+/* admin */
+.admin-card {
+  background: var(--admin-bg-cart-gradient);
+  color: var(--fg);
+  /* padding: 1.25rem; */
+  border-radius: 12px;
 }

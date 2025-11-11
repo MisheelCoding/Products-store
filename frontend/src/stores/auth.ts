@@ -3,7 +3,7 @@
 // stores/auth.ts
 import { defineStore } from 'pinia'
 import api from '@/scripts/api'
-import type { User, AuthResponse } from '@/types/auth'
+import type { User, AuthResponseDTO, UserRoles } from '@/types/auth'
 import { useRouter } from 'vue-router'
 import { computed, ref } from 'vue'
 
@@ -18,7 +18,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   // ??getters
   const isAuthenticated = computed(() => !!accessToken.value && !!user.value)
-  const checkRole = (role: string) => user.value?.roles.includes(role) ?? false
+  const checkRole = (roles: UserRoles | UserRoles[]) => {
+    const rolesArray = Array.isArray(roles) ? roles : [roles]
+    return rolesArray.some((role) => user.value?.roles.includes(role)) ?? false
+  }
 
   //?? actions
 
@@ -48,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = ''
 
     try {
-      const { data } = await api.post<AuthResponse>('api/auth/login', {
+      const { data } = await api.post<AuthResponseDTO>('api/auth/login', {
         username,
         password,
       })
@@ -84,7 +87,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function tryRestore(): Promise<void> {
     try {
-      const { data } = await api.post<AuthResponse>('api/auth/refresh', null, {
+      const { data } = await api.post<AuthResponseDTO>('api/auth/refresh', null, {
         withCredentials: true,
       })
       setAccessToken(data.accessToken)
@@ -155,7 +158,7 @@ export const useAuthStore = defineStore('auth', () => {
 //       this.loading = true
 //       this.error = ''
 //       try {
-//         const { data } = await api.post<AuthResponse>('/api/auth/login', { username, password })
+//         const { data } = await api.post<AuthResponseDTO>('/api/auth/login', { username, password })
 //         this.setAccessToken(data.accessToken)
 //         this.setUser(data.user)
 //         router.push({ name: 'profile' })
@@ -172,13 +175,13 @@ export const useAuthStore = defineStore('auth', () => {
 //       this.loading = true
 //       this.error = ''
 //       try {
-//         const { data } = await api.post<AuthResponse>
+//         const { data } = await api.post<AuthResponseDTO>
 //       } catch (e) {}
 //     },
 //     // восстановление из refresh-cookie при обновлений страницы
 //     async tryRestore(): Promise<void> {
 //       try {
-//         const { data } = await api.post<AuthResponse>('/api/auth/refresh', null, {
+//         const { data } = await api.post<AuthResponseDTO>('/api/auth/refresh', null, {
 //           withCredentials: true,
 //         })
 //         this.setAccessToken(data.accessToken)

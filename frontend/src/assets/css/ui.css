@@ -1,0 +1,47 @@
+:root {
+  /* *** sizes */
+  --ui-size-small-height: 2rem;
+  --ui-size-small-width: 14rem;
+  --ui-size-small-font: 0.875rem;
+
+  --ui-size-default-height: 2.5rem;
+  --ui-size-default-width: 18rem;
+  --ui-size-default-font: 1rem;
+
+  --ui-size-large-height: 3rem;
+  --ui-size-large-width: 22rem;
+  --ui-size-large-font: 1.25rem;
+
+  /* *** border-radius */
+  --ui-radius-small: 8px;
+  --ui-radius-default: 12px;
+  --ui-radius-full: 50%;
+}
+
+.ui-size--small {
+  min-height: var(--ui-size-small-height);
+  min-width: var(--ui-size-small-width);
+  font-size: var(--ui-size-small-font);
+}
+
+.ui-size--default {
+  min-height: var(--ui-size-default-height);
+  min-width: var(--ui-size-default-width);
+  font-size: var(--ui-size-default-font);
+}
+
+.ui-size--large {
+  min-height: var(--ui-size-large-height);
+  min-width: var(--ui-size-large-width);
+  font-size: var(--ui-size-large-font);
+}
+
+.ui-radius--small {
+  border-radius: var(--ui-radius-small);
+}
+.ui-radius--full {
+  border-radius: var(--ui-radius-full);
+}
+.ui-radius--default {
+  border-radius: var(--ui-radius-default);
+}

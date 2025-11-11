@@ -1,4 +1,4 @@
-import type { AuthResponse, User } from '@/types/auth'
+import type { AuthResponseDTO, User } from '@/types/auth'
 import axios, { AxiosError } from 'axios'
 import { defineStore } from 'pinia'
 
@@ -28,7 +28,10 @@ export const useAuthStore = defineStore('auth', {
       this.error = ''
 
       try {
-        const { data } = await axios.post<AuthResponse>('/api/auth/login', { username, password })
+        const { data } = await axios.post<AuthResponseDTO>('/api/auth/login', {
+          username,
+          password,
+        })
         this.setAccessToken(data.accessToken)
         this.setUser(data.user)
       } catch (e) {

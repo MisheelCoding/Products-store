@@ -14,6 +14,76 @@ export const useProfileStore = defineStore('profile', () => {
 
   const isAddingAddress = ref(false)
 
+  const avatarUrl = ref<string | null>(null)
+  const avatarExpires = ref<number | null>(null)
+  const isAvatarLoading = ref(false)
+
+  let avatarIntervalId: ReturnType<typeof setInterval> | null = null
+
+  //** загрузить аватар  */
+  async function uploadAvatar(file: File) {
+    if (!file) return
+    isAvatarLoading.value = true
+    try {
+      const formData = new FormData()
+      formData.append('avatar', file)
+
+      const { data } = await api.post('/api/user/profile/photo', formData, {
+        withCredentials: true,
+      })
+
+      await fetchAvatar()
+      return data
+    } catch (e) {
+      console.error('Ошибка при загрузке аватара:', e)
+      throw e
+    } finally {
+      isAvatarLoading.value = false
+    }
+  }
+  //** получить аватар  */
+  async function fetchAvatar() {
+    isAvatarLoading.value = true
+    try {
+      const { data } = await api.get('/api/user/profile/photo', { withCredentials: true })
+
+      // Проверяем что URL валидный
+      if (!data.url) {
+        throw new Error('URL не получен от сервера')
+      }
+
+      avatarUrl.value = data.url
+      avatarExpires.value = data.expiresAt * 1000 // сохраняем время истечения
+
+      console.log('Avatar URL получен, истекает:', new Date(data.expiresAt * 1000))
+    } catch (e) {
+      console.error('Ошибка при загрузке аватара:', e)
+      avatarUrl.value = null
+    } finally {
+      isAvatarLoading.value = false
+    }
+  }
+
+  async function ensureAvatar() {
+    const now = Date.now()
+    // Обновляем за 30 секунд до истечения ()
+    if (!avatarExpires.value || now > avatarExpires.value - 30000) {
+      console.log('Обновляем URL аватара...')
+      await fetchAvatar()
+    }
+  }
+
+  // Увеличиваем интервал автообновления
+  function startAvatarAutoRefresh() {
+    if (avatarIntervalId) clearInterval(avatarIntervalId)
+    avatarIntervalId = setInterval(() => ensureAvatar(), 60000) // Каждую минуту
+  }
+
+  function stopAvatarAutoRefresh() {
+    if (avatarIntervalId) clearInterval(avatarIntervalId)
+    avatarIntervalId = null
+  }
+
   // ***Получить аддресса
   async function getAddresses() {
     const { data } = await api.get('api/user/addresses')
@@ -174,6 +244,11 @@ export const useProfileStore = defineStore('profile', () => {
     timer,
     intervalId,
 
+    // *** avatar
+    avatarUrl,
+    avatarExpires,
+    isAvatarLoading,
+
     // **methods
     getAddresses,
     updateAddress,
@@ -182,7 +257,13 @@ export const useProfileStore = defineStore('profile', () => {
 
     saveNumber,
     deleteNumber,
-
     startTimer,
+
+    // avatar methods
+    fetchAvatar,
+    ensureAvatar,
+    startAvatarAutoRefresh,
+    stopAvatarAutoRefresh,
+    uploadAvatar,
   }
 })

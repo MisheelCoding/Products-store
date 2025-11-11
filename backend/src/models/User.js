@@ -29,7 +29,8 @@ const addressSchema = new mongoose.Schema(
 addressSchema.plugin(encrypt, {
   encryptionKey: process.env.ENCRYPTION_KEY,
   signingKey: process.env.SIGNING_KEY,
-  encryptedFields: ['phone'],
+  encryptedFields: ['phone', 'addressLine'],
+  // decryptPostSave: false, // Ключевая опция - не расшифровывать автоматически
 });
 
 const userSchema = new mongoose.Schema(
@@ -47,6 +48,9 @@ const userSchema = new mongoose.Schema(
     region: { type: String, default: null },
     store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
     savedCards: [savedCardSchema],
+    profilePhoto: {
+      public_id: { type: String, default: null }, // надо поменять public_id на key чтобы работать корректно S3 c TS В бдудушем
+    },
   },
   { timestamps: true },
 );
@@ -63,6 +67,16 @@ userSchema.plugin(encrypt, {
   signingKey: process.env.SIGNING_KEY,
   encryptedFields: ['phone', 'email'],
   // encryptedFields: ['phone'],
+  // decryptPostSave: false, // Ключевая опция - не расшифровывать автоматически
 });
+
+userSchema.virtual('orders', {
+  ref: 'Order',
+  localField: '_id',
+  foreignField: 'user',
+});
+
+userSchema.set('toObject', { virtuals: true });
+userSchema.set('toJSON', { virtuals: true });
 
 export const USER = mongoose.model('User', userSchema);

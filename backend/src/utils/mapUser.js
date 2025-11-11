@@ -1,3 +1,4 @@
+import { maskAddress, maskEmail, maskPhone } from '#utils/mask.js';
 export const buildTokenPayload = (user) => ({
   id: user._id,
   roles: user.roles,
@@ -11,5 +12,20 @@ export const toClientUser = (userDoc) => {
   return {
     id: _id,
     ...rest,
+  };
+};
+
+export const toClientMaskedUser = (userDoc) => {
+  const user = toClientUser(userDoc);
+
+  return {
+    ...user,
+    email: maskEmail(user.email),
+    phone: maskPhone(user.phone),
+    addresses: user.addresses?.map((addr) => ({
+      ...addr,
+      addressLine: maskAddress(addr.addressLine),
+      phone: maskPhone(addr.phone),
+    })),
   };
 };
